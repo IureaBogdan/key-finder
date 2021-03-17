@@ -12,9 +12,14 @@ static void gpio_task(void* arg)
     uint32_t io_num;
     for(;;) {
         if(xQueueReceive(gpio_evt_queue, &io_num, portMAX_DELAY)) {
-            printf("GPIO[%d] intr, val: %d\n", io_num, gpio_get_level(io_num));
-            alternate_fast_blink(4000);
-            buzz(2000);
+            printf("--- GPIO[%d] -> %d\n", io_num, gpio_get_level(io_num));
+            if(gpio_get_level(io_num)==1){
+                set_pin_on_high(LRED_PIN,500);
+            }
+            else if(gpio_get_level(io_num)==0){
+                set_pin_on_high(LBLUE_PIN,500);
+            }
+            //alternate_fast_blink(4000);
         }
     }
 }
@@ -35,18 +40,14 @@ void app_main()
     //configure GPIO with the given settings
     gpio_config(&io_conf);
 
+    //set posedge interrupt type
     io_conf.intr_type = GPIO_INTR_POSEDGE;
     //set as input mode
     io_conf.mode = GPIO_MODE_INPUT;
     //bit mask of the input pins
     io_conf.pin_bit_mask = INPUT_MASK;
-    //enable pull-down mode
-    io_conf.pull_down_en = 1;
     //configure GPIO with the given settings
     gpio_config(&io_conf);
-
-    //change gpio intrrupt type for one pin
-    gpio_set_intr_type(BUTTON_PIN, GPIO_INTR_POSEDGE);
 
     //create a queue to handle gpio event from isr
     gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
@@ -62,8 +63,8 @@ void app_main()
 
     int cnt = 0;
     while(true){
-        printf("########%d########\n",cnt);
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        printf("%d\n",cnt);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
         cnt++;
     }
 }
