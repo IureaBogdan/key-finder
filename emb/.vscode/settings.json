@@ -1,7 +1,22 @@
 {
+    "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
-        "string.h": "c",
+        "task.h": "c",
         "stdio.h": "c",
-        "queue.h": "c"
+        "kf_ledc_config.h": "c",
+        "freertos.h": "c",
+        "kf_gpio_task_config.h": "c",
+        "string.h": "c",
+        "*.ipp": "c",
+        "system_error": "c",
+        "optional": "c",
+        "istream": "c",
+        "ostream": "c",
+        "ratio": "c",
+        "array": "c",
+        "functional": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     }
 }
