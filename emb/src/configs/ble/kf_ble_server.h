@@ -75,7 +75,16 @@ typedef struct
     int prepare_len;
 } prepare_type_env_t;
 
+/**
+ * @brief BLE configuration function.
+ * @return void
+*/
 void kf_config_bt();
+
+/**
+ * @brief GATT profile event handler - used as callback.
+ * @return void
+*/
 void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
 
 #endif

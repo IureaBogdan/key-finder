@@ -63,7 +63,7 @@ static esp_ble_adv_data_t adv_data = {
     .flag = (ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT),
 };
 
-// scan response data
+// Scan response data
 static esp_ble_adv_data_t scan_rsp_data = {
     .set_scan_rsp = true,
     .include_name = true,
@@ -92,13 +92,16 @@ static esp_ble_adv_params_t adv_params = {
 };
 
 /* One gatt-based profile one app_id and one gatts_if, this array will store the gatts_if returned by ESP_GATTS_REG_EVT */
-
 static struct gatts_profile_inst gl_profile_tab[PROFILE_NUM] = {
     [PROFILE_APP_ID] = {
         .gatts_cb = kf_gatts_profile_event_handler,
         .gatts_if = ESP_GATT_IF_NONE, /* Not get the gatt_if, so initial is ESP_GATT_IF_NONE */
     }};
 
+/**
+ * @brief GAP event handler - used as callback.
+ * @return void
+*/
 static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param)
 {
     switch (event)
@@ -224,6 +227,10 @@ static void exec_write_event_env(prepare_type_env_t *prepare_write_env, esp_ble_
     prepare_write_env->prepare_len = 0;
 }
 
+/**
+ * @brief Handler function for received message.
+ * @return Does not return.
+*/
 static void kf_handle_recv_message(void *arg)
 {
     char *msg;
@@ -489,6 +496,10 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
     }
 }
 
+/**
+ * @brief Register gatts event handler - used as callback.
+ * @return void
+*/
 static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
 {
     /* If event is register event, store the gatts_if for each profile */

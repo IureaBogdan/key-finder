@@ -16,6 +16,7 @@
 extern bool gv_isPaired;
 xQueueHandle gpio_evt_queue = NULL;
 
+// ledc channel config
 static ledc_channel_config_t ledc_channel = {
     .channel = LEDC_CHANNEL_0,
     .duty = 0,
@@ -24,6 +25,7 @@ static ledc_channel_config_t ledc_channel = {
     .hpoint = 0,
     .timer_sel = LEDC_HS_TIMER};
 
+// ledc timer config
 static ledc_timer_config_t ledc_timer = {
     .duty_resolution = LEDC_TIMER_13_BIT,
     .freq_hz = FREQUECY,
@@ -32,6 +34,7 @@ static ledc_timer_config_t ledc_timer = {
     .clk_cfg = LEDC_AUTO_CLK,
 };
 
+
 void kf_set_pin_on_high(int pin, int timeInMillis)
 {
     gpio_set_level(pin, HIGH);
@@ -39,12 +42,22 @@ void kf_set_pin_on_high(int pin, int timeInMillis)
     gpio_set_level(pin, LOW);
 }
 
+/**
+ * @brief Handler for interruption events. This function is forced
+ *  into RAM for fast accessibility.
+ * @return void
+ */
 static void IRAM_ATTR gpio_isr_handler(void *arg)
 {
     uint32_t gpio_num = (uint32_t)arg;
     xQueueSendFromISR(gpio_evt_queue, &gpio_num, NULL);
 }
 
+/**
+ * @brief Handler function for interruption event queue.
+ * Used as callback.
+ * @return Does not return.
+*/
 static void kf_button_action_task(void *arg)
 {
     uint32_t io_num;
@@ -67,6 +80,10 @@ static void kf_button_action_task(void *arg)
     }
 }
 
+/** 
+ * @brief ESP-IDF GPIO configuration function.
+ * @return void
+ */
 static void kf_config_gpio()
 {
     gpio_config_t io_conf;
@@ -105,6 +122,10 @@ static void kf_config_gpio()
     gpio_isr_handler_add(BUTTON_PIN, gpio_isr_handler, (void *)BUTTON_PIN);
 }
 
+/** 
+ * @brief ESP-IDF ledc configuration function.
+ * @return void
+ */
 static void kf_config_ledc()
 {
     ledc_timer_config(&ledc_timer);
