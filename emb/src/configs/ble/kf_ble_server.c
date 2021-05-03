@@ -27,25 +27,9 @@ static esp_attr_value_t gatts_char1_val = {
 /* CONFIG_SET_RAW_ADV_DATA */
 static uint8_t adv_service_uuid128[ESP_UUID_LEN_128] = {
     /* LSB <--------------------------------------------------------------------------------> MSB */
-    0xfb,
-    0x34,
-    0x9b,
-    0x5f,
-    0x80,
-    0x00,
-    0x00,
-    0x80,
-    0x00,
-    0x10,
-    0x00,
-    0x00,
-    0xEE,
-    0x00,
-    0x00,
-    0x00,
+    0xfb,0x34,0x9b,0x5f,0x80,0x00,0x00,0x80,0x00,0x10,0x00,0x00,0xEE,0x00,0x00,0x00,
 };
 
-// The length of adv data must be less than 31 bytes
 //adv data
 static esp_ble_adv_data_t adv_data = {
     .set_scan_rsp = false,
@@ -54,8 +38,8 @@ static esp_ble_adv_data_t adv_data = {
     .min_interval = 0x0006, //slave connection min interval, Time = min_interval * 1.25 msec
     .max_interval = 0x0010, //slave connection max interval, Time = max_interval * 1.25 msec
     .appearance = 0x00,
-    .manufacturer_len = 0,       //TEST_MANUFACTURER_DATA_LEN,
-    .p_manufacturer_data = NULL, //&test_manufacturer[0],
+    .manufacturer_len = 0,
+    .p_manufacturer_data = NULL,
     .service_data_len = 0,
     .p_service_data = NULL,
     .service_uuid_len = sizeof(adv_service_uuid128),
@@ -71,8 +55,8 @@ static esp_ble_adv_data_t scan_rsp_data = {
     //.min_interval = 0x0006,
     //.max_interval = 0x0010,
     .appearance = 0x00,
-    .manufacturer_len = 0,       //TEST_MANUFACTURER_DATA_LEN,
-    .p_manufacturer_data = NULL, //&test_manufacturer[0],
+    .manufacturer_len = 0,
+    .p_manufacturer_data = NULL,
     .service_data_len = 0,
     .p_service_data = NULL,
     .service_uuid_len = sizeof(adv_service_uuid128),
@@ -299,13 +283,13 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
         rsp.attr_value.handle = param->read.handle;
         rsp.attr_value.len = 7;
 
-        rsp.attr_value.value[0] = 0x4e;
-        rsp.attr_value.value[1] = 0x4f;
-        rsp.attr_value.value[2] = 0x20;
-        rsp.attr_value.value[3] = 0x44;
-        rsp.attr_value.value[4] = 0x41;
-        rsp.attr_value.value[5] = 0x54;
-        rsp.attr_value.value[6] = 0x41;
+        rsp.attr_value.value[0] = 0x4e; //N
+        rsp.attr_value.value[1] = 0x4f; //O
+        rsp.attr_value.value[2] = 0x20; // 
+        rsp.attr_value.value[3] = 0x44; //D
+        rsp.attr_value.value[4] = 0x41; //A
+        rsp.attr_value.value[5] = 0x54; //T
+        rsp.attr_value.value[6] = 0x41; //A
 
         esp_ble_gatts_send_response(gatts_if, param->read.conn_id, param->read.trans_id,
                                     ESP_GATT_OK, &rsp);
