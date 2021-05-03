@@ -4,7 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import TileList from '../components/associated-devices/tile-list';
 import Header from '../components/top-header';
 import ble from "../utils/ble";
-
+import store from '../utils/store'
 
 export default class DevicesScreen extends React.Component {
     constructor(props) {
@@ -41,12 +41,28 @@ export default class DevicesScreen extends React.Component {
                             onPress={() => ble.connect()}
                         />
                         <Button
+                            title="TEST"
+                            onPress={() => {
+                                console.log(btoa('FIND'));
+                                console.log(atob(btoa('FIND')));
+                            }}
+                        />
+                        <Button
                             title="Force DC"
                             onPress={() => ble.forceDC()}
                         />
                         <Button
                             title="Force Send"
                             onPress={() => ble.forceSend()}
+                        />
+                        <Button
+                            title='cauta'
+                            onPress={
+                                async () => {
+                                    const a = await store.getAllDevices();
+                                    console.log(a);
+                                }
+                            }
                         />
                     </View>
                 </ScrollView>

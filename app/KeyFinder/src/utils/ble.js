@@ -5,11 +5,10 @@ function print(v) {
     console.log(`-------------${v}------------`);
 }
 
-BL_MESSAGE = 'RklORA==';
 class KfBleUtil {
 
     constructor() {
-        this.data = require("../../assets/devices/devices-data.json");
+        this.data = require("./devices-data.json");
         this.manager = new BleManager();
         this.connected_device_id = null;
     }
@@ -63,8 +62,6 @@ class KfBleUtil {
                     });
             })
             .catch(err => console.log(err));
-
-
     }
 
     dc() {
@@ -94,6 +91,13 @@ class KfBleUtil {
                 print('Eroare la trimiterea mesajului');
                 console.log(err);
             });
+    }
+
+    addDevice(){
+
+    }
+    findDevice(){
+
     }
 }
 

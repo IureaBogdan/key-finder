@@ -18,13 +18,14 @@ export default class TopBar extends React.Component {
             buttonStyle={{ width: 92 }}
             icon={
                 <Icon
-                    name = {this.props.buttonTitle == 'Caută' ? "search" : "refresh"}
+                    name={this.props.buttonTitle == 'Caută' ? "search" : "refresh"}
                     size={15}
                     color={assets.color.secondary}
                 />
             }
             iconRight
             loading={this.props.isLoading}
+            loadingProps={{ color: assets.color.secondary }}
             onPress={() => this.props.buttonAction()}
             type="clear" />
 
