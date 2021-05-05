@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-elements';
-import assets from '../../color';
+import assets from '../../assets';
 
 export default class Tile extends React.Component {
     constructor(props) {
@@ -21,7 +21,8 @@ export default class Tile extends React.Component {
                 <Button
                     title='Adaugă'
                     onPress = {this.props.onPress}
-                    buttonStyle = {styles.buttonStyle}/>
+                    buttonStyle = {styles.buttonStyle}
+                    />
             </View>
         )
     }

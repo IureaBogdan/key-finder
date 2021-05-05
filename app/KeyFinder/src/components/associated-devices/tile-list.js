@@ -12,18 +12,23 @@ export default class TileList extends React.Component {
         this.props.devices.forEach(dev => {
             devices.push(
                 <Tile
-                    title={dev.title}
-                    key={dev.key} />
+                    title={dev.deviceName}
+                    key={dev.uuid}
+                    onFindPress={dev.onFindPress}
+                    onDeletePress={dev.onDeletePress}
+                    color ={dev.color}
+                    active = {dev.active}
+                />
             );
         });
-        return (<View style={styles.container}>{ devices }</View>);
+        return (<View style={styles.container}>{devices}</View>);
     }
 }
 const styles = StyleSheet.create({
     container: {
         display: 'flex',
         flexWrap: 'wrap',
-        flexDirection:'row-reverse',
+        flexDirection: 'row-reverse',
         justifyContent: 'space-between',
     },
 });

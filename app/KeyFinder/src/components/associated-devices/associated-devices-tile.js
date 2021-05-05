@@ -1,27 +1,50 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-elements';
-import assets from '../../color';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import assets from '../../assets';
 
 export default class Tile extends React.Component {
     constructor(props) {
         super(props);
     }
     render() {
+        const iconSize = 100;
         return (
-            <View style={styles.container}>
+            <View
+                style={styles.container}
+                opacity={this.props.active ? 1 : 0.85}
+            >
                 <View>
                     <Text style={styles.title}>
                         {this.props.title}
                     </Text>
                 </View>
+                <View style={styles.iconContainer}>
+                    <Ionicons
+                        style={{ height: iconSize, width: iconSize }}
+                        name={'key-sharp'}
+                        size={iconSize}
+                        color={this.props.active ? assets.color.primary : assets.color.inactive} />
+                </View>
                 <View style={styles.buttonGroup}>
                     <Button
-                        title='Găsește'
-                        buttonStyle={styles.findButtonStyle} />
+                        icon={
+                            <Ionicons
+                                name={'close-circle-outline'}
+                                size={20}
+                                color={assets.color.secondary}
+                            />
+                        }
+                        containerStyle={styles.deleteButtonContainer}
+                        buttonStyle={styles.deleteButtonStyle}
+                        onPress={this.props.onDeletePress} />
                     <Button
-                        title='Șterge'
-                        buttonStyle={styles.deleteButtonStyle} />
+                        title='Găsește'
+                        disabled={!this.props.active}
+                        containerStyle={styles.findButtonContainer}
+                        buttonStyle={styles.findButtonStyle}
+                        onPress={this.props.onFindPress} />
 
                 </View>
             </View>
@@ -31,39 +54,49 @@ export default class Tile extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        height: 130,
+        minHeight: 200,
         width: '48%',
         borderRadius: 5,
         backgroundColor: 'white',
 
         paddingVertical: 6,
         paddingHorizontal: 10,
-        marginVertical: 3,
+        marginVertical: 7,
 
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         elevation: 9,
-        shadowColor: '#000'
+        shadowColor: '#000',
     },
     title: {
         fontSize: 20,
     },
-    id: {
+    iconContainer: {
+        display: 'flex',
+        // justifyContent: 'center',
+        alignItems: 'center'
     },
-
     buttonGroup: {
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        alignContent: 'space-between',
     },
-
+    findButtonContainer: {
+        margin: '1%',
+        width: '70%',
+    },
+    deleteButtonContainer: {
+        margin: '1%',
+        width: '28%',
+    },
     findButtonStyle: {
         backgroundColor: assets.color.primary,
-    },
+        borderRadius: 15,
 
+    },
     deleteButtonStyle: {
         backgroundColor: 'red',
+        borderRadius: 1000,
     },
-
 });

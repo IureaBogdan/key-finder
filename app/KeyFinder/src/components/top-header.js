@@ -3,8 +3,8 @@ import * as React from 'react';
 import { Text } from 'react-native';
 import { StyleSheet, View } from 'react-native';
 import { Button, Header } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import assets from '../color';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import assets from '../assets';
 
 export default class TopBar extends React.Component {
     constructor(props) {
@@ -17,8 +17,8 @@ export default class TopBar extends React.Component {
             titleStyle={styles.buttonTitleStyle}
             buttonStyle={{ width: 92 }}
             icon={
-                <Icon
-                    name={this.props.buttonTitle == 'Caută' ? "search" : "refresh"}
+                <Ionicons
+                    name={this.props.buttonTitle == 'Căutare' ? "search" : "reload-outline"}
                     size={15}
                     color={assets.color.secondary}
                 />

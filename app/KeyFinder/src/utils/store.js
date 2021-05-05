@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-community/async-storage";
+import StoreDeviceDataModel from "./data-models/store-device-data-model";
 
 class Store {
     async store(key, storeDeviceDataModel) {
@@ -19,16 +20,37 @@ class Store {
             console.error(e);
         }
     }
+    async remove(key) {
+        try {
+            return await AsyncStorage.removeItem(key);
+        }
+        catch (e) {
+            console.error(e);
+        }
+    }
 
     async getAllDevices() {
         try {
             const keys = await AsyncStorage.getAllKeys();
             let devices = [];
-            for(let i =0; i< keys.length;i++){
+            for (let i = 0; i < keys.length; i++) {
                 const d = await this.retrieve(keys[i]);
-                devices.push(d);
+
+                const obj = JSON.parse(d);
+                const device = Object.create(StoreDeviceDataModel.prototype, Object.getOwnPropertyDescriptors(obj));
+
+                devices.push(device);
             }
             return devices;
+        }
+        catch (e) {
+            console.error(e);
+        }
+    }
+
+    async cleanup() {
+        try {
+            await AsyncStorage.clear();
         }
         catch (e) {
             console.error(e);

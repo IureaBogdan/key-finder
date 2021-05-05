@@ -1,7 +1,7 @@
 export default class StoreDeviceDataModel{
-    constructor(uuid,deviceName, accesCode){
+    constructor(uuid,deviceName, accessCode){
         this.uuid = uuid,
         this.deviceName = deviceName;
-        this.accesCode = accesCode;
+        this.accessCode = accessCode;
     }
 }

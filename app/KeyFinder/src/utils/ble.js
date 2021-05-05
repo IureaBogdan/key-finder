@@ -1,9 +1,4 @@
-
 import { BleManager } from 'react-native-ble-plx';
-
-function print(v) {
-    console.log(`-------------${v}------------`);
-}
 
 class KfBleUtil {
 
@@ -14,9 +9,7 @@ class KfBleUtil {
     }
 
     searchForDevices() {
-        var p = new Promise((resolve, reject) => {
-            print('Scanning')
-
+        return new Promise((resolve, reject) => {
             let devices = [];
             this.manager.startDeviceScan(this.data.adv_service_uuids, null, (error, device) => {
                 if (error) reject(Error(error));
@@ -28,76 +21,89 @@ class KfBleUtil {
                 resolve(devices);
             }, 3000)
         });
-        return p;
     }
 
-    st() {
-        this.searchForDevices()
-            .then(d => {
-                console.log(d);
+    addDevice(deviceID, securityCode) {
+        return this.manager.connectToDevice(deviceID)
+            .then(() => {
+                return this.manager.discoverAllServicesAndCharacteristicsForDevice(deviceID);
             })
-            .catch(err => console.log(err));
-    }
-
-    connect() {
-        this.searchForDevices()
-            .then(d => {
-                console.log(d);
-                d[0].connect()
-                    .then(connected_device => {
-                        console.log(connected_device);
-                        return this.manager.discoverAllServicesAndCharacteristicsForDevice(connected_device.id)
-                    })
-                    .then(dev => {
-                        let ids = 0;
-                        dev.services()
-                            .then(services => {
-                                service = services.find(x => x.uuid == this.data.gatt_service_uuid)
-                                service.characteristics()
-                                    .then(chs => console.log(chs))
-                            });
-                    })
+            .then(() => {
+                this.manager.writeCharacteristicWithoutResponseForDevice(
+                    deviceID,
+                    this.data.gatt_service[0].uuid,
+                    this.data.gatt_service[0].characteristic_uuid,
+                    btoa(securityCode))
                     .catch(err => {
-                        console.log(err)
+                        console.log(err);
                     });
             })
-            .catch(err => console.log(err));
-    }
-
-    dc() {
-        print("Deconectare");
-        this.manager.cancelDeviceConnection(this.device.id)
-            .catch(err => {
-                print('Eroare la deconectare');
-                console.log(err);
+            .then(() => {
+                return this.manager.readCharacteristicForDevice(
+                    deviceID,
+                    this.data.gatt_service[0].uuid,
+                    this.data.gatt_service[0].characteristic_uuid
+                );
             })
-    }
-
-    forceDC() {
-        print("Deconectare fortata")
-        this.manager.cancelDeviceConnection("10:52:1C:68:A5:92")
-            .catch(err => {
-                print('Eroare la deconectare');
-                console.log(err);
+            .then(char => {
+                this.manager.cancelDeviceConnection(deviceID)
+                    .catch(e => {
+                        print('Eroare la deconectare');
+                        console.error(e);
+                    });
+                return atob(char.value);
             })
-    }
-
-    forceSend() {
-        print('Trimitere mesaj');
-        this.manager.writeCharacteristicWithoutResponseForDevice(
-            "10:52:1C:68:A5:92",
-            "000000ff-0000-1000-8000-00805f9b34fb", "0000ff01-0000-1000-8000-00805f9b34fb", "RklORA==")
-            .catch(err => {
-                print('Eroare la trimiterea mesajului');
-                console.log(err);
+            .catch((e) => {
+                console.error(e);
+                this.manager.isDeviceConnected(deviceID)
+                    .then(isConnected => {
+                        if (isConnected)
+                            this.manager.cancelDeviceConnection(deviceID)
+                                .catch(e => {
+                                    print('Eroare la deconectare');
+                                    console.error(e);
+                                });
+                    });
+                throw new Error('Dispozitivul nu poate fi contactat.');
             });
     }
 
-    addDevice(){
-
-    }
-    findDevice(){
-
+    findDevice(deviceID, accessCode) {
+        return this.manager.connectToDevice(deviceID)
+            .then(() => {
+                return this.manager.discoverAllServicesAndCharacteristicsForDevice(deviceID);
+            })
+            .then(() => {
+                this.manager.writeCharacteristicWithoutResponseForDevice(
+                    deviceID,
+                    this.data.gatt_service[0].uuid,
+                    this.data.gatt_service[0].characteristic_uuid,
+                    btoa(accessCode.concat(this.data.write_message.FIND)))
+                    .catch(err => {
+                        console.log(err);
+                    });
+            })
+            .then(() => {
+                this.manager.cancelDeviceConnection(deviceID)
+                    .catch(e => {
+                        print('Eroare la deconectare');
+                        console.error(e);
+                    });
+                return true;
+            })
+            .catch((e) => {
+                console.error(e);
+                this.manager.isDeviceConnected(deviceID)
+                    .then(isConnected => {
+                        if (isConnected)
+                            this.manager.cancelDeviceConnection(deviceID)
+                                .catch(e => {
+                                    print('Eroare la deconectare');
+                                    console.error(e);
+                                });
+                    });
+                throw new Error('Dispozitivul nu poate fi contactat.');
+            });
     }
 }
 

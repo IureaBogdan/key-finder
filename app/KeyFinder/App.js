@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import assets from './src/assets';
 import  DevicesScreen from './src/screens/devices-screen';
 import SearchScreen from './src/screens/search-screen';
 
@@ -27,8 +28,8 @@ export default function App() {
           },
         })}
         tabBarOptions={{
-          activeTintColor: 'tomato',
-          inactiveTintColor: 'gray',
+          activeTintColor: assets.color.primary,
+          inactiveTintColor: assets.color.inactive,
         }}
       >
         <Tab.Screen name="Asocieri" component={DevicesScreen} />

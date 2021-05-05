@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, Input, Overlay } from 'react-native-elements';
-import assets from '../color';
+import assets from '../assets';
 
 export default class AppOverlay extends React.Component {
     constructor(props) {
@@ -44,6 +44,7 @@ export default class AppOverlay extends React.Component {
                         <Button
                             onPress={this.props.onAddPress}
                             title='Adaugă'
+                            loading = {this.props.isLoading}
                             buttonStyle={styles.buttonStyle} />
                     </View>
                 </View>
