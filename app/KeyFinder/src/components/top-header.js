@@ -1,7 +1,5 @@
-
 import * as React from 'react';
-import { Text } from 'react-native';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Button, Header } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import assets from '../assets';

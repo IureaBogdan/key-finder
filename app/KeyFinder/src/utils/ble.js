@@ -29,7 +29,7 @@ class KfBleUtil {
                 return this.manager.discoverAllServicesAndCharacteristicsForDevice(deviceID);
             })
             .then(() => {
-                this.manager.writeCharacteristicWithoutResponseForDevice(
+                return this.manager.writeCharacteristicWithoutResponseForDevice(
                     deviceID,
                     this.data.gatt_service[0].uuid,
                     this.data.gatt_service[0].characteristic_uuid,
@@ -74,7 +74,7 @@ class KfBleUtil {
                 return this.manager.discoverAllServicesAndCharacteristicsForDevice(deviceID);
             })
             .then(() => {
-                this.manager.writeCharacteristicWithoutResponseForDevice(
+                return this.manager.writeCharacteristicWithoutResponseForDevice(
                     deviceID,
                     this.data.gatt_service[0].uuid,
                     this.data.gatt_service[0].characteristic_uuid,
@@ -89,7 +89,7 @@ class KfBleUtil {
                         print('Eroare la deconectare');
                         console.error(e);
                     });
-                return true;
+                return { success: true };
             })
             .catch((e) => {
                 console.error(e);

@@ -1,92 +1,109 @@
+import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, ToastAndroid, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import assets from '../assets';
 import TileList from '../components/associated-devices/tile-list';
 import Header from '../components/top-header';
-import StoreDeviceDataModel from '../utils/data-models/store-device-data-model';
-import store from '../utils/store';
-import { useRoute } from '@react-navigation/native';
 import ble from "../utils/ble";
-import { Alert } from 'react-native';
-import { ToastAndroid } from 'react-native';
-import assets from '../assets';
-import { ThemeConsumer } from 'react-native-elements';
+import store from '../utils/store';
 
 class DevicesScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isInFocus: null,
+            isLoading: false,
             devices: [],
-            needsRefresh: false
         }
     }
 
     componentDidMount() {
-        this.refreshDevices();
-    }
-
-    refreshDevices = () => {
-        store.getAllDevices()
-            .then(devices => {
-                let i = 0;
-                console.log(devices);
+        store.getAllDevices().then((devices) => {
+            if (devices.length > 0) {
                 devices.forEach(d => {
-                    ++i;
                     d['onFindPress'] = this.onFindPress.bind(this, d.uuid, d.accessCode);
                     d['onDeletePress'] = this.onDeletePress.bind(this, d.uuid, d.deviceName);
                     d['color'] = assets.color.inactive;
-                    d['active'] = i % 2 == 0 ? false : true;
-                })
-                this.setState({ devices: [...devices] })
-            });
+                    d['active'] = false;
+                });
+                this.setState({ devices: [...devices] });
+            }
+        });
     }
 
     onDeletePress = (deviceId, deviceName) => {
         Alert.alert(
             "Atenție!!!",
             `Ești pe cale de a șterge asocierea cu dispozitivul '${deviceName}'. Ești sigur că vrei să continui această acțiune?`,
-            [
-                {
-                    text: "Anulează",
-                    onPress: () => { },
-                    style: "cancel"
-                },
-                {
-                    text: "Da",
-                    onPress: async () => {
-                        await store.remove(deviceId);
-                        const filteredDevices = this.state.devices.filter((d) => {
-                            return d.uuid != deviceId;
-                        });
-                        await this.setState({ devices: [...filteredDevices] });
-                        ToastAndroid.show(`${deviceName} a fost șters.`, ToastAndroid.SHORT);
-                    }
+            [{
+                text: "Anulează",
+                onPress: () => { },
+                style: "cancel"
+            },
+            {
+                text: "Da",
+                onPress: async () => {
+                    await store.remove(deviceId);
+                    const filteredDevices = this.state.devices.filter((d) => {
+                        return d.uuid != deviceId;
+                    });
+                    this.setState({ devices: [...filteredDevices] }, () => { ToastAndroid.show(`${deviceName} a fost șters.`, ToastAndroid.SHORT); });
                 }
-            ]
-        );
-
+            }]);
     }
 
-    onFindPress = async (deviceId,accessCode) => {
-        print = (p) => console.log(`-------------${p}-------------`);
-        print('Finding');
-
-        try{
-            await ble.findDevice(deviceId,accessCode);
+    onFindPress = async (deviceId, accessCode) => {
+        try {
+            if ((await ble.findDevice(deviceId, accessCode)).success)
+                ToastAndroid.show('Dispozitivul a fost contactat.', ToastAndroid.SHORT);
         }
-        catch(e){
+        catch (e) {
             console.error(e);
         }
     }
 
-    onRefreshPress = () =>{
-        this.refreshDevices();
+    onRefreshPress = () => {
+        this.refreshDevices(true);
+    }
+
+    refreshDevices = (withAlert) => {
+        ToastAndroid.show("Se caută dispozitivele asociate...", ToastAndroid.SHORT);
+        store.getAllDevices().then((devices) => {
+            if (devices.length == 0 && withAlert) {
+                Alert.alert(
+                    "Nu s-au găsit asocieri.",
+                    `Apasă pe tab-ul 'Caută' pentru a descoperi noi dispozitive, apoi asociază telefonul cu unul sau mai multe din acestea.`,
+                    [{ text: "Am înțeles", onPress: () => { } }]);
+                return;
+            }
+            devices.forEach(d => {
+                d['onFindPress'] = this.onFindPress.bind(this, d.uuid, d.accessCode);
+                d['onDeletePress'] = this.onDeletePress.bind(this, d.uuid, d.deviceName);
+                d['color'] = assets.color.inactive;
+                d['active'] = false;
+            });
+            this.setState({ isLoading: true }, async () => {
+                const scannedDevices = await ble.searchForDevices();
+                let hasFound = false;
+                devices.forEach(d => {
+                    const found = scannedDevices.filter(sd => sd.id == d.uuid)
+                    if (found.length > 0) {
+                        d['active'] = true;
+                        hasFound = true;
+                    }
+                    else d['active'] = false;
+                });
+                this.setState({ isLoading: false, devices: [...devices] }, () => {
+                    if (hasFound)
+                        ToastAndroid.show("Au fost găsite dispozitive în apropiere.", ToastAndroid.SHORT);
+                    else
+                        ToastAndroid.show("Nu a fost găsit niciun dispozitiv.", ToastAndroid.SHORT);
+                });
+            });
+        });
     }
 
     render() {
-        if(this.props.route.params?.deviceAdded)
-            console.log(this.props.route.params?.deviceAdded);
         return (
             <View>
                 <Header
@@ -102,35 +119,9 @@ class DevicesScreen extends React.Component {
                     </View>
 
 
-                    <Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text>
+                    {/* <Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text> */}
                     <View style={styles.cnt}>
 
-                        <Button
-                            title="Clean"
-                            onPress={async () => { store.cleanup(); this.refreshDevices(); }}
-                        />
-                        <Button
-                            title='Print'
-                            onPress={
-                                async () => {
-                                    const a = await store.getAllDevices();
-                                    console.log(a);
-                                }} />
-                        <Button
-                            title='Add'
-                            onPress={
-                                async () => {
-                                    await store.store(
-                                        '12:34:56:78:90:11',
-                                        new StoreDeviceDataModel('12:34:56:78:90:11', 'Chei garaj', 'ac111'));
-                                    await store.store(
-                                        '12:34:56:78:90:12',
-                                        new StoreDeviceDataModel('12:34:56:78:90:12', 'Cheile de la garsoniera', 'ac222'));
-                                    await store.store(
-                                        '12:34:56:78:90:13',
-                                        new StoreDeviceDataModel('12:34:56:78:90:13', 'Chei masina', 'ac333'));
-                                    this.refreshDevices();
-                                }} />
                     </View>
                 </ScrollView>
             </View>

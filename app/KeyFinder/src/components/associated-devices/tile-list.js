@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { StyleSheet, View } from 'react-native';
 import Tile from './associated-devices-tile';
-import { View } from 'react-native';
-import { StyleSheet } from 'react-native';
 
 export default class TileList extends React.Component {
     constructor(props) {
         super(props)
     }
+
     render() {
         let devices = []
         this.props.devices.forEach(dev => {
@@ -16,8 +16,9 @@ export default class TileList extends React.Component {
                     key={dev.uuid}
                     onFindPress={dev.onFindPress}
                     onDeletePress={dev.onDeletePress}
-                    color ={dev.color}
-                    active = {dev.active}
+                    color={dev.color}
+                    active={dev.active}
+                    deviceId={dev.uuid}
                 />
             );
         });

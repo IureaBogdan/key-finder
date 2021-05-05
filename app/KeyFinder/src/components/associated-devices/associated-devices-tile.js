@@ -8,6 +8,7 @@ export default class Tile extends React.Component {
     constructor(props) {
         super(props);
     }
+
     render() {
         const iconSize = 100;
         return (
@@ -16,9 +17,8 @@ export default class Tile extends React.Component {
                 opacity={this.props.active ? 1 : 0.85}
             >
                 <View>
-                    <Text style={styles.title}>
-                        {this.props.title}
-                    </Text>
+                    <Text style={styles.title}>{this.props.title}</Text>
+                    <Text> ID: {this.props.deviceId}</Text>
                 </View>
                 <View style={styles.iconContainer}>
                     <Ionicons
@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
     },
     title: {
+        margin: 2,
         fontSize: 20,
     },
     iconContainer: {

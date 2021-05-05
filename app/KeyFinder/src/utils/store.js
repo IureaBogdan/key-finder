@@ -5,7 +5,6 @@ class Store {
     async store(key, storeDeviceDataModel) {
         try {
             await AsyncStorage.setItem(key, JSON.stringify(storeDeviceDataModel))
-            return await 0;
         }
         catch (e) {
             console.log(e);
@@ -20,6 +19,7 @@ class Store {
             console.error(e);
         }
     }
+
     async remove(key) {
         try {
             return await AsyncStorage.removeItem(key);
