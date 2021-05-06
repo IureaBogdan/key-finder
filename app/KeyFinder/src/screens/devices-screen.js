@@ -5,7 +5,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import assets from '../assets';
 import TileList from '../components/associated-devices/tile-list';
 import Header from '../components/top-header';
-import ble from "../utils/ble";
+import BtManager from "../utils/bt-manager";
+import ErrorHandler from '../utils/error-handler';
 import store from '../utils/store';
 
 class DevicesScreen extends React.Component {
@@ -54,11 +55,14 @@ class DevicesScreen extends React.Component {
 
     onFindPress = async (deviceId, accessCode) => {
         try {
-            if ((await ble.findDevice(deviceId, accessCode)).success)
+            if ((await BtManager.findDevice(deviceId, accessCode)).success)
                 ToastAndroid.show('Dispozitivul a fost contactat.', ToastAndroid.SHORT);
         }
         catch (e) {
-            console.error(e);
+            if (!ErrorHandler.handleAllErrors(e)) {
+                console.log('Eroare la căutarea dispozitivelor');
+                console.error(e);
+            }
         }
     }
 
@@ -67,8 +71,8 @@ class DevicesScreen extends React.Component {
     }
 
     refreshDevices = (withAlert) => {
-        ToastAndroid.show("Se caută dispozitivele asociate...", ToastAndroid.SHORT);
         store.getAllDevices().then((devices) => {
+            ToastAndroid.show("Se caută dispozitivele asociate...", ToastAndroid.SHORT);
             if (devices.length == 0 && withAlert) {
                 Alert.alert(
                     "Nu s-au găsit asocieri.",
@@ -83,7 +87,7 @@ class DevicesScreen extends React.Component {
                 d['active'] = false;
             });
             this.setState({ isLoading: true }, async () => {
-                const scannedDevices = await ble.searchForDevices();
+                const scannedDevices = await BtManager.searchForDevices();
                 let hasFound = false;
                 devices.forEach(d => {
                     const found = scannedDevices.filter(sd => sd.id == d.uuid)

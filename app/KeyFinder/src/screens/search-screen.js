@@ -5,9 +5,10 @@ import { ScrollView } from 'react-native-gesture-handler';
 import TileList from '../components/found-devices/tile-list';
 import Overlay from '../components/overlay-add-device.js';
 import Header from '../components/top-header';
-import ble from '../utils/ble';
 import StoreDeviceDataModel from '../utils/data-models/store-device-data-model';
 import store from '../utils/store';
+import BtManager from '../utils/bt-manager';
+import ErrorHandler from '../utils/error-handler';
 
 
 class SearchScreen extends React.Component {
@@ -48,16 +49,25 @@ class SearchScreen extends React.Component {
     }
 
     onSearchButtonPress = () => {
-        ToastAndroid.show("Se caută dispozitive...", ToastAndroid.SHORT);
-        this.setState({ isLoading: true }, async () => {
-
-            const d = await ble.searchForDevices();
-            this.setState({ isLoading: false, devices: [...d] }, () => {
-                if (this.state.devices.length > 0)
-                    ToastAndroid.show("Au fost găsite dispozitive în apropiere.", ToastAndroid.SHORT);
-                else
-                    ToastAndroid.show("Nu a fost găsit niciun dispozitiv.", ToastAndroid.SHORT);
-            });
+        this.setState({ isLoading: true }, () => {
+            ToastAndroid.show("Se caută dispozitive...", ToastAndroid.SHORT);
+            BtManager.searchForDevices().then((d) => {
+                this.setState({ devices: [...d] }, () => {
+                    if (this.state.devices.length > 0)
+                        ToastAndroid.show("Au fost găsite dispozitive în apropiere.", ToastAndroid.SHORT);
+                    else
+                        ToastAndroid.show("Nu a fost găsit niciun dispozitiv.", ToastAndroid.SHORT);
+                });
+            })
+                .catch((e) => {
+                    if (!ErrorHandler.handleAllErrors(e)) {
+                        console.log('Eroare la căutarea dispozitivelor');
+                        console.error(e);
+                    }
+                })
+                .finally(() => {
+                    this.setState({ isLoading: false });
+                })
         });
     }
 
@@ -86,13 +96,17 @@ class SearchScreen extends React.Component {
         if (!hasErr) {
             this.setState({ isCheckingSecurityCode: true }, async () => {
                 try {
-                    const accessCode = await ble.addDevice(this.state.deviceId, this.state.securityCode);
+                    const accessCode = await BtManager.addDevice(this.state.deviceId, this.state.securityCode);
                     if (accessCode != "NO DATA") {
                         const storeModel = new StoreDeviceDataModel(this.state.deviceId, this.state.deviceName, accessCode);
                         await store.store(this.state.deviceId, storeModel);
 
-                        this.setState({ overlayVisible: false }, () => {
-                            ToastAndroid.show('Adăugat. Apasă pe împrospătare pentru a vedea noul dispozitiv.', ToastAndroid.SHORT);
+                        this.setState({
+                            overlayVisible: false,
+                            deviceName: '',
+                            securityCode: '',
+                        }, () => {
+                            ToastAndroid.show('Adăugat. Apasă pe împrospătare pentru a vedea noul dispozitiv.', ToastAndroid.LONG);
                             this.props.navigation.navigate('Asocieri');
                         });
 
@@ -100,17 +114,19 @@ class SearchScreen extends React.Component {
                     else ToastAndroid.show('Codul de securitate este incorect.', ToastAndroid.SHORT);
                 }
                 catch (e) {
-                    this.setState({ overlayVisible: false }, () => {
-                        Alert.alert(
-                            e.message,
-                            `Cauze posibile:\n   *v-ați depărtat de dispozitiv.\n   *dispozitivul este deja conectat.`,
-                            [{ text: "Am înțeles", onPress: () => { }, }]);
+                    this.setState({
+                        overlayVisible: false,
+                        deviceName: '',
+                        securityCode: '',
+                    }, () => {
+                        if (!ErrorHandler.handleAllErrors(e)) {
+                            console.log('Eroare la căutarea dispozitivelor');
+                            console.error(e);
+                        }
                     });
                 }
                 finally {
                     this.setState({
-                        deviceName: '',
-                        securityCode: '',
                         deviceNameErrorMessage: '',
                         securityCodeErrorMessage: '',
                         isCheckingSecurityCode: false
