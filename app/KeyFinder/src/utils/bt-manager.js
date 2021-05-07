@@ -59,7 +59,6 @@ class BtManager {
                     return atob(char.value);
                 })
                 .catch((e) => {
-                    console.log(e);
                     this.manager.isDeviceConnected(deviceID)
                         .then(isConnected => {
                             if (isConnected)
@@ -97,17 +96,13 @@ class BtManager {
                     return { success: true };
                 })
                 .catch((e) => {
-                    console.error(e);
                     this.manager.isDeviceConnected(deviceID)
                         .then(isConnected => {
                             if (isConnected)
-                                this.manager.cancelDeviceConnection(deviceID)
-                                    .catch(e => {
-                                        print('Eroare la deconectare');
-                                        console.error(e);
-                                    });
+                                this.manager.cancelDeviceConnection(deviceID);
                         });
-                    throw new Error('Dispozitivul nu poate fi contactat.');
+                    this.throwErrorByType(e);
+                    throw new DeviceNotInRangeError('Dispozitivul nu poate fi contactat.');
                 });
         }
         else throw new BluetoothError('Bluetooth-ul nu este pornit');

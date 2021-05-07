@@ -8,7 +8,7 @@ export default class ErrorHandler {
     static handleBluetoothError = () => {
         Alert.alert(
             "Bluetooth-ul nu este pornit",
-            "Pentru a continua acțiunea acesta trebuie să fie pornit. Se permite pornirea bluetooth-ului?",
+            "Pentru a continua acțiunea, acesta trebuie să fie pornit. Se permite pornirea bluetooth-ului?",
             [
                 {
                     text: "Nu",
@@ -26,7 +26,7 @@ export default class ErrorHandler {
     static handleLocationServicesError = () => {
         Alert.alert(
             "Locația nu este pornită",
-            "Pentru a continua acțiunea aceasta trebuie să fie pornită.",
+            "Pentru a continua acțiunea, aceasta trebuie să fie pornită.",
             [
                 {
                     text: "Ok",
@@ -42,25 +42,24 @@ export default class ErrorHandler {
             {
                 title: "Accesul la locație nu este permis",
                 message:
-                    "Penru ca aplicația să funcționeze corespunzător, permisiunea de a accesa" +
-                    " locația dispozitivului este necesară.\n\nSe perminte accesul asupra locației dumneavoastră?",
+                    "Penru ca aplicația să funcționeze corespunzător, permisiunea " +
+                    "de a accesa locația dispozitivului este necesară.",
                 buttonPositive: "Am înțeles"
             }
         );
     }
 
-    static handleDeviceNotInRangeError = () =>{
+    static handleDeviceNotInRangeError = () => {
         Alert.alert(
             'Dispozitivul nu a putut fi contactat',
-            "Cauze posibile:\n\n"+
-            "Poziția dumneavoastră față de dispozitiv s-a schimbat de la momentul ultimei căutări\n\n"+
-            "Bluetooth-ul sau locația sunt oprite\n\n"+
-            "Dispozitivul este deja conectat.",
+            "Cauze posibile:\n\n" +
+            "Poziția dumneavoastră față de dispozitiv s-a schimbat de la momentul ultimei căutări.\n\n" +
+            "Dispozitivul este conectat cu o altă aplicație mobilă.\n\n" +
+            "Bluetooth-ul sau locația sunt oprite."
             [{ text: "Am înțeles", onPress: () => { }, }]);
     }
 
     static handleAllErrors = (e) => {
-        console.log(e);
         if (e instanceof KfAppError) {
             if (e instanceof LocationError) {
                 this.handleLocationError();
@@ -71,7 +70,7 @@ export default class ErrorHandler {
             else if (e instanceof LocationServicesError) {
                 this.handleLocationServicesError();
             }
-            else if (e instanceof DeviceNotInRangeError){
+            else if (e instanceof DeviceNotInRangeError) {
                 this.handleDeviceNotInRangeError();
             }
             return true;

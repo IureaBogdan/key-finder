@@ -50,7 +50,6 @@ class SearchScreen extends React.Component {
 
     onSearchButtonPress = () => {
         this.setState({ isLoading: true }, () => {
-            ToastAndroid.show("Se caută dispozitive...", ToastAndroid.SHORT);
             BtManager.searchForDevices().then((d) => {
                 this.setState({ devices: [...d] }, () => {
                     if (this.state.devices.length > 0)
