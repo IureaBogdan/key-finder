@@ -13,11 +13,11 @@ export default class TopBar extends React.Component {
         let button = <Button
             title={this.props.buttonTitle}
             titleStyle={styles.buttonTitleStyle}
-            buttonStyle={{ width: 92 }}
+            buttonStyle={styles.buttonContainerStyle}
             icon={
                 <Ionicons
                     name={this.props.buttonTitle == 'Căutare' ? "search" : "reload-outline"}
-                    size={15}
+                    size={18}
                     color={assets.color.secondary}
                 />
             }
@@ -32,7 +32,7 @@ export default class TopBar extends React.Component {
                 <Header
                     leftComponent={
                         <Text style={styles.title}>
-                            Key Finder
+                            {this.props.title}
                         </Text>}
                     leftContainerStyle={{ width: 120 }}
                     rightComponent={button}
@@ -60,6 +60,9 @@ const styles = StyleSheet.create({
     buttonTitleStyle: {
         color: assets.color.secondary,
         padding: 5,
-        fontSize: 12
+        fontSize: 14
+    },
+    buttonContainerStyle:{
+        width: 120,
     },
 });

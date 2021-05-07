@@ -3,9 +3,10 @@ import { BluetoothError, DeviceNotInRangeError, LocationError, LocationServicesE
 class BtManager {
 
     constructor() {
-        this.data = require("./devices-data.json");
+        this.data = require("../../assets/data/devices-data.json");
         this.manager = new BleManager();
-        this.connected_device_id = null;
+
+        this.blEnabled = true;
         this.manager.onStateChange(state => {
             this.blEnabled = state == 'PoweredOn' ? true : false;
         })

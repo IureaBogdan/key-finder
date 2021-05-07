@@ -55,7 +55,7 @@ export default class ErrorHandler {
             "Cauze posibile:\n\n" +
             "Poziția dumneavoastră față de dispozitiv s-a schimbat de la momentul ultimei căutări.\n\n" +
             "Dispozitivul este conectat cu o altă aplicație mobilă.\n\n" +
-            "Bluetooth-ul sau locația sunt oprite."
+            "Bluetooth-ul sau locația sunt oprite.",
             [{ text: "Am înțeles", onPress: () => { }, }]);
     }
 

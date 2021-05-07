@@ -4,10 +4,11 @@ import { Alert, StyleSheet, Text, ToastAndroid, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import assets from '../assets';
 import TileList from '../components/associated-devices/tile-list';
+import BlankView from '../components/blank-view';
 import Header from '../components/top-header';
 import BtManager from "../utils/bt-manager";
 import ErrorHandler from '../utils/error-handler';
-import store from '../utils/store';
+import store from '../utils/storage-manager';
 
 class DevicesScreen extends React.Component {
     constructor(props) {
@@ -124,24 +125,29 @@ class DevicesScreen extends React.Component {
     render() {
         return (
             <View>
-                <Header
-                    buttonAction={this.onRefreshPress}
-                    isLoading={this.state.isLoading}
-                    buttonTitle="Împrospătare"
-                ></Header>
-                <ScrollView style={{ marginBottom: 95, paddingTop: 6 }}>
+                <View>
+                    <Header
+                        title = 'Asocieri'
+                        buttonAction={this.onRefreshPress}
+                        isLoading={this.state.isLoading}
+                        buttonTitle="Împrospătare"
+                    ></Header>
+                    {this.state.devices.length > 0 &&
+                        <ScrollView style={{ marginBottom: 95, paddingTop: 6 }}>
+                            <View style={styles.associatedDevicesContainer}>
+                                {this.state.devices.length != 0 && <TileList devices={this.state.devices} />}
+                            </View>
+                        </ScrollView>
+                    }
+                    {this.state.devices.length == 0 &&
+                        < BlankView
+                            title="Nu există asocieri cu dispozitivele KeyFinder. Apasă pe tab-ul caută pentru a adăuga unul."
+                            style={styles.blank} />
+                    }
+                </View>
 
-                    <View style={styles.associatedDevicesContainer}>
-                        {this.state.devices.length != 0 && <TileList devices={this.state.devices} />}
-                        {this.state.devices.length == 0 && <Text style={{ fontSize: 40 }}>Niciun dispozitiv adăugat</Text>}
-                    </View>
-
-
-                    {/* <Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text><Text></Text> */}
-                    <View style={styles.cnt}>
-
-                    </View>
-                </ScrollView>
+                <View>
+                </View>
             </View>
         );
     }
@@ -157,10 +163,7 @@ const styles = StyleSheet.create({
         width: '96%',
         marginHorizontal: '2%',
     },
-    cnt: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
+    blank: {
+        marginVertical: 80,
     },
-
 });

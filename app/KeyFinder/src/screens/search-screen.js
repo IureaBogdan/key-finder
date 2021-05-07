@@ -1,14 +1,15 @@
 import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
-import { Alert, StyleSheet, ToastAndroid, View } from 'react-native';
+import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import TileList from '../components/found-devices/tile-list';
 import Overlay from '../components/overlay-add-device.js';
 import Header from '../components/top-header';
 import StoreDeviceDataModel from '../utils/data-models/store-device-data-model';
-import store from '../utils/store';
+import store from '../utils/storage-manager';
 import BtManager from '../utils/bt-manager';
 import ErrorHandler from '../utils/error-handler';
+import BlankView from '../components/blank-view';
 
 
 class SearchScreen extends React.Component {
@@ -152,33 +153,45 @@ class SearchScreen extends React.Component {
         return (
             <View>
                 <Header
+                    title='Key Finder'
                     buttonAction={() => this.onSearchButtonPress()}
                     isLoading={this.state.isLoading}
                     buttonTitle="Căutare" />
+                {
+                    this.state.devices.length > 0 &&
+                    <View>
+                        <ScrollView style={{ marginBottom: 95, paddingTop: 6 }}>
+                            <View style={styles.foundDevicesContainer}>
+                                <TileList devices={this.updateDevices()} />
+                            </View>
+                        </ScrollView>
 
-                <ScrollView style={{ marginBottom: 95, paddingTop: 6 }}>
-                    <View style={styles.foundDevicesContainer}>
-                        <TileList devices={this.updateDevices()} />
+                        <Overlay
+                            isVisible={this.state.overlayVisible}
+                            deviceId={this.state.deviceId}
+
+                            deviceNameValue={this.state.deviceName}
+                            onDeviceNameChange={(x) => this.onDeviceNameChange(x)}
+
+                            securityCodeValue={this.state.securityCode}
+                            onSecurityCodeChange={this.onSecurityCodeChange}
+
+                            deviceNameErrorMessage={this.state.deviceNameErrorMessage}
+                            securityCodeErrorMessage={this.state.securityCodeErrorMessage}
+
+                            isLoading={this.state.isCheckingSecurityCode}
+
+                            onAddPress={this.onSubmitAddDevice.bind(this)}
+                            onBackdropPress={this.onToggleOverlay}
+                        />
                     </View>
-                </ScrollView>
-
-                <Overlay
-                    isVisible={this.state.overlayVisible}
-                    deviceId={this.state.deviceId}
-
-                    deviceNameValue={this.state.deviceName}
-                    onDeviceNameChange={(x) => this.onDeviceNameChange(x)}
-
-                    securityCodeValue={this.state.securityCode}
-                    onSecurityCodeChange={this.onSecurityCodeChange}
-
-                    deviceNameErrorMessage={this.state.deviceNameErrorMessage}
-                    securityCodeErrorMessage={this.state.securityCodeErrorMessage}
-
-                    isLoading={this.state.isCheckingSecurityCode}
-
-                    onAddPress={this.onSubmitAddDevice.bind(this)}
-                    onBackdropPress={this.onToggleOverlay} />
+                }
+                {
+                    this.state.devices.length == 0 &&
+                    < BlankView
+                        title="Nu s-au găsit dispozitive KeyFinder în apropiere. Apasă pe butonul de căutare situat mai sus pentru a verifica din nou."
+                        style={styles.blank} />
+                }
             </View>
         );
     }
@@ -190,9 +203,11 @@ export default function (props) {
 }
 
 const styles = StyleSheet.create({
-
     foundDevicesContainer: {
         width: '92%',
         marginHorizontal: '4%',
+    },
+    blank: {
+        marginVertical: 80
     },
 });

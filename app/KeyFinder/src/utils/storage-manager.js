@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import StoreDeviceDataModel from "./data-models/store-device-data-model";
 
-class Store {
+class StorageManager {
     async store(key, storeDeviceDataModel) {
         try {
             await AsyncStorage.setItem(key, JSON.stringify(storeDeviceDataModel))
@@ -59,5 +59,5 @@ class Store {
 
 }
 
-const store = new Store();
+const store = new StorageManager();
 export default store;
