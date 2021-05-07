@@ -1,0 +1,14 @@
+{
+    "write_message": {
+        "FIND": "FIND"
+    },
+    "adv_service_uuids": [
+        "000000ee-0000-1000-8000-00805f9b34fb"
+    ],
+    "gatt_service": [
+        {
+            "uuid": "000000ff-0000-1000-8000-00805f9b34fb",
+            "characteristic_uuid": "0000ff01-0000-1000-8000-00805f9b34fb"
+        }
+    ]
+}

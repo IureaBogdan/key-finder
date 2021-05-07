@@ -1,29 +1,35 @@
 import * as React from 'react';
+import { StyleSheet, View } from 'react-native';
 import Tile from './associated-devices-tile';
-import { View } from 'react-native';
-import { StyleSheet } from 'react-native';
 
 export default class TileList extends React.Component {
     constructor(props) {
         super(props)
     }
+
     render() {
         let devices = []
         this.props.devices.forEach(dev => {
             devices.push(
                 <Tile
-                    title={dev.title}
-                    key={dev.key} />
+                    title={dev.deviceName}
+                    key={dev.uuid}
+                    onFindPress={dev.onFindPress}
+                    onDeletePress={dev.onDeletePress}
+                    color={dev.color}
+                    active={dev.active}
+                    deviceId={dev.uuid}
+                />
             );
         });
-        return (<View style={styles.container}>{ devices }</View>);
+        return (<View style={styles.container}>{devices}</View>);
     }
 }
 const styles = StyleSheet.create({
     container: {
         display: 'flex',
         flexWrap: 'wrap',
-        flexDirection:'row-reverse',
+        flexDirection: 'row-reverse',
         justifyContent: 'space-between',
     },
 });

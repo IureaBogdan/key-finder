@@ -17,11 +17,15 @@
 
 #define GATTS_SERVICE_UUID 0x00FF
 #define GATTS_CHAR_UUID 0xFF01
-#define GATTS_NUM_HANDLE 4 //Number of handles(Service handle, Characteristic handle, Characteristic value handle, Characteristic descriptor handle)
+#define GATTS_NUM_HANDLE 4 //Number of handlers(Service handle, Characteristic handle, Characteristic value handle, Characteristic descriptor handle)
 
 #define GATTS_TAG "KeyFinder"
 #define DEVICE_NAME "Key Finder"
 #define GATTS_CHAR_VAL_LEN_MAX 0x40
+
+#define SECURITY_CODE "RGPZ6644"
+#define ACCESS_CODE "EFT324AA"
+#define FIND_ACCES_CODE "EFT324AAFIND"
 
 #define PREPARE_BUF_MAX_SIZE 1024
 #define adv_config_flag (1 << 0)
@@ -74,6 +78,11 @@ typedef struct
     uint8_t *prepare_buf;
     int prepare_len;
 } prepare_type_env_t;
+
+typedef struct{
+    esp_gatt_if_t gatts_if;
+    esp_ble_gatts_cb_param_t **param;
+} gatt_if_param_wrapper;
 
 /**
  * @brief BLE configuration function.

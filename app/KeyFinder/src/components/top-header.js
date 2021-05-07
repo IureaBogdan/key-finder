@@ -1,10 +1,8 @@
-
 import * as React from 'react';
-import { Text } from 'react-native';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Button, Header } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import assets from '../color';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import assets from '../assets';
 
 export default class TopBar extends React.Component {
     constructor(props) {
@@ -15,16 +13,17 @@ export default class TopBar extends React.Component {
         let button = <Button
             title={this.props.buttonTitle}
             titleStyle={styles.buttonTitleStyle}
-            buttonStyle={{ width: 92 }}
+            buttonStyle={styles.buttonContainerStyle}
             icon={
-                <Icon
-                    name = {this.props.buttonTitle == 'Caută' ? "search" : "refresh"}
-                    size={15}
+                <Ionicons
+                    name={this.props.buttonTitle == 'Căutare' ? "search" : "reload-outline"}
+                    size={18}
                     color={assets.color.secondary}
                 />
             }
             iconRight
             loading={this.props.isLoading}
+            loadingProps={{ color: assets.color.secondary }}
             onPress={() => this.props.buttonAction()}
             type="clear" />
 
@@ -33,7 +32,7 @@ export default class TopBar extends React.Component {
                 <Header
                     leftComponent={
                         <Text style={styles.title}>
-                            Key Finder
+                            {this.props.title}
                         </Text>}
                     leftContainerStyle={{ width: 120 }}
                     rightComponent={button}
@@ -61,6 +60,9 @@ const styles = StyleSheet.create({
     buttonTitleStyle: {
         color: assets.color.secondary,
         padding: 5,
-        fontSize: 12
+        fontSize: 14
+    },
+    buttonContainerStyle:{
+        width: 120,
     },
 });
