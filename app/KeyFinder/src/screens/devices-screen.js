@@ -7,7 +7,7 @@ import TileList from '../components/associated-devices/tile-list';
 import BlankView from '../components/blank-view';
 import Header from '../components/top-header';
 import BtManager from "../utils/bt-manager";
-import ErrorHandler from '../utils/error-handler';
+import ErrorHandler from '../components/error-alert';
 import store from '../utils/storage-manager';
 
 class DevicesScreen extends React.Component {
@@ -130,7 +130,7 @@ class DevicesScreen extends React.Component {
                         title = 'Asocieri'
                         buttonAction={this.onRefreshPress}
                         isLoading={this.state.isLoading}
-                        buttonTitle="Împrospătare"
+                        buttonTitle="Reîmprospătare"
                     ></Header>
                     {this.state.devices.length > 0 &&
                         <ScrollView style={{ marginBottom: 95, paddingTop: 6 }}>

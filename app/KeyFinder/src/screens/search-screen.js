@@ -8,7 +8,7 @@ import Header from '../components/top-header';
 import StoreDeviceDataModel from '../utils/data-models/store-device-data-model';
 import store from '../utils/storage-manager';
 import BtManager from '../utils/bt-manager';
-import ErrorHandler from '../utils/error-handler';
+import ErrorHandler from '../components/error-alert';
 import BlankView from '../components/blank-view';
 
 

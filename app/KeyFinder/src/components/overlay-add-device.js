@@ -76,6 +76,5 @@ const styles = StyleSheet.create({
     formSubmit: {
         display: 'flex',
         alignItems: 'center',
-        // justifyContent: 'center',
     },
 });

@@ -1,6 +1,6 @@
 import { Alert } from "react-native";
-import { BluetoothError, DeviceNotInRangeError, KfAppError, LocationError, LocationServicesError } from "./err/kf-app-error";
-import BtManager from './bt-manager';
+import { BluetoothError, DeviceNotInRangeError, KfAppError, LocationError, LocationServicesError } from "../utils/err/kf-app-error";
+import BtManager from '../utils/bt-manager';
 import { PermissionsAndroid } from "react-native";
 
 export default class ErrorHandler {

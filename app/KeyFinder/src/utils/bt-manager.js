@@ -1,5 +1,6 @@
 import { BleManager } from 'react-native-ble-plx';
 import { BluetoothError, DeviceNotInRangeError, LocationError, LocationServicesError } from './err/kf-app-error';
+
 class BtManager {
 
     constructor() {
@@ -9,7 +10,7 @@ class BtManager {
         this.blEnabled = true;
         this.manager.onStateChange(state => {
             this.blEnabled = state == 'PoweredOn' ? true : false;
-        })
+        });
     }
 
     searchForDevices() {
