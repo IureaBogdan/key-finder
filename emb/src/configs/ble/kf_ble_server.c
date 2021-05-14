@@ -99,7 +99,6 @@ static struct gatts_profile_inst gl_profile_tab[PROFILE_NUM] = {
  * @brief Handler function for received message.
  * @return Does not return.
 */
-
 static void kf_handle_recv_message(void *arg)
 {
     const char *msg;
@@ -133,7 +132,6 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
 {
     switch (event)
     {
-
     case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT:
         adv_config_done &= (~adv_config_flag);
         if (adv_config_done == 0)
@@ -152,27 +150,20 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
         //advertising start complete event to indicate advertising start successfully or failed
         if (param->adv_start_cmpl.status != ESP_BT_STATUS_SUCCESS)
         {
-            ESP_LOGE(GATTS_TAG, "Advertising start failed\n");
+            ESP_LOGE(GATTS_TAG, "Porinirea serviciului de advertising a esuat\n");
         }
         break;
     case ESP_GAP_BLE_ADV_STOP_COMPLETE_EVT:
         if (param->adv_stop_cmpl.status != ESP_BT_STATUS_SUCCESS)
         {
-            ESP_LOGE(GATTS_TAG, "Advertising stop failed\n");
+            ESP_LOGE(GATTS_TAG, "Oprirea serviciului de advertising a esuat\n");
         }
         else
         {
-            ESP_LOGI(GATTS_TAG, "Stop adv successfully\n");
+            ESP_LOGI(GATTS_TAG, "Serviciul de advertising a fost oprit\n");
         }
         break;
     case ESP_GAP_BLE_UPDATE_CONN_PARAMS_EVT:
-        ESP_LOGI(GATTS_TAG, "update connection params status = %d, min_int = %d, max_int = %d,conn_int = %d,latency = %d, timeout = %d",
-                 param->update_conn_params.status,
-                 param->update_conn_params.min_int,
-                 param->update_conn_params.max_int,
-                 param->update_conn_params.conn_int,
-                 param->update_conn_params.latency,
-                 param->update_conn_params.timeout);
         break;
     default:
         break;
@@ -194,9 +185,7 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
         }
         else
         {
-            ESP_LOGI(GATTS_TAG, "Reg app failed, app_id %04x, status %d\n",
-                     param->reg.app_id,
-                     param->reg.status);
+            ESP_LOGI(GATTS_TAG, "Inregistrarea aplicatiei a esuat, status %d\n", param->reg.status);
             return;
         }
     }
@@ -223,7 +212,7 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
     {
     case ESP_GATTS_REG_EVT:
     {
-        ESP_LOGI(GATTS_TAG, "REGISTER_APP_EVT, status %d, app_id %d\n", param->reg.status, param->reg.app_id);
+        ESP_LOGI(GATTS_TAG, "EVENIMENT DE CONECTARE, Status={%d}, ID={%d}\n", param->reg.status, param->reg.app_id);
         gl_profile_tab[PROFILE_APP_ID].service_id.is_primary = true;
         gl_profile_tab[PROFILE_APP_ID].service_id.id.inst_id = 0x00;
         gl_profile_tab[PROFILE_APP_ID].service_id.id.uuid.len = ESP_UUID_LEN_16;
@@ -232,21 +221,20 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
         esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(DEVICE_NAME);
         if (set_dev_name_ret)
         {
-            ESP_LOGE(GATTS_TAG, "set device name failed, error code = %x", set_dev_name_ret);
+            ESP_LOGE(GATTS_TAG, "NUMELE DISPOZITIVULUI NU POATE FI SETAT, Cod eroare={%x}", set_dev_name_ret);
         }
 
-        //config adv data
         esp_err_t ret = esp_ble_gap_config_adv_data(&adv_data);
         if (ret)
         {
-            ESP_LOGE(GATTS_TAG, "config adv data failed, error code = %x", ret);
+            ESP_LOGE(GATTS_TAG, "CONFIGURAREA DATELOR DE ADVERTISING A ESUAT, Cod eroare={%x}", ret);
         }
         adv_config_done |= adv_config_flag;
-        //config scan response data
+
         ret = esp_ble_gap_config_adv_data(&scan_rsp_data);
         if (ret)
         {
-            ESP_LOGE(GATTS_TAG, "config scan response data failed, error code = %x", ret);
+            ESP_LOGE(GATTS_TAG, "CONFIGURAREA RASPUNSULUI SCANARII DATELOR DE ADVERTISING A ESUAT, Cod eroare={%x}", ret);
         }
         adv_config_done |= scan_rsp_config_flag;
 
@@ -257,7 +245,7 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
     {
         if (!isAuthorized)
         {
-            ESP_LOGI(GATTS_TAG, "READ EVENT - NO DATA\n");
+            ESP_LOGI(GATTS_TAG, "EVENIMENT DE CITIRE - NO DATA\n");
             esp_gatt_rsp_t rsp;
             memset(&rsp, 0, sizeof(esp_gatt_rsp_t));
 
@@ -277,7 +265,7 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
         }
         else
         {
-            ESP_LOGI(GATTS_TAG, "READ EVENT - AUTHORIZED\n");
+            ESP_LOGI(GATTS_TAG, "EVENIMENT DE CITIRE - USER AUTORIZAT\n");
             esp_gatt_rsp_t rsp;
             memset(&rsp, 0, sizeof(esp_gatt_rsp_t));
 
@@ -300,7 +288,7 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
     }
     case ESP_GATTS_WRITE_EVT:
     {
-        ESP_LOGI(GATTS_TAG, "WRITE EVENT");
+        ESP_LOGI(GATTS_TAG, "EVENIMENT DE SCRIERE");
         if (!param->write.is_prep)
         {
             esp_log_buffer_char(GATTS_TAG, param->write.value, param->write.len);
@@ -318,7 +306,6 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
                     prepare_write_env.prepare_len = 0;
                     if (prepare_write_env.prepare_buf == NULL)
                     {
-                        ESP_LOGE(GATTS_TAG, "Gatt_server prep no mem\n");
                         status = ESP_GATT_NO_RESOURCES;
                     }
                 }
@@ -343,7 +330,7 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
                 esp_err_t response_err = esp_ble_gatts_send_response(gatts_if, param->write.conn_id, param->write.trans_id, status, gatt_rsp);
                 if (response_err != ESP_OK)
                 {
-                    ESP_LOGE(GATTS_TAG, "Send response error\n");
+                    ESP_LOGE(GATTS_TAG, "EROARE LA TRIMITEREA RASPUNSULUI\n");
                 }
                 free(gatt_rsp);
                 if (status != ESP_GATT_OK)
@@ -363,23 +350,6 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
         break;
     }
     case ESP_GATTS_EXEC_WRITE_EVT:
-    {
-        ESP_LOGI(GATTS_TAG, "ESP_GATTS_EXEC_WRITE_EVT");
-        esp_ble_gatts_send_response(gatts_if, param->write.conn_id, param->write.trans_id, ESP_GATT_OK, NULL);
-        if (param->exec_write.exec_write_flag == ESP_GATT_PREP_WRITE_EXEC)
-        {
-            esp_log_buffer_hex(GATTS_TAG, prepare_write_env.prepare_buf, prepare_write_env.prepare_len);
-        }
-        else
-        {
-            ESP_LOGI(GATTS_TAG, "ESP_GATT_PREP_WRITE_CANCEL");
-        }
-        if (prepare_write_env.prepare_buf)
-        {
-            free(prepare_write_env.prepare_buf);
-            prepare_write_env.prepare_buf = NULL;
-        }
-        prepare_write_env.prepare_len = 0;
         break;
     case ESP_GATTS_MTU_EVT:
         ESP_LOGI(GATTS_TAG, "ESP_GATTS_MTU_EVT, MTU %d", param->mtu.mtu);
@@ -387,7 +357,8 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
     case ESP_GATTS_UNREG_EVT:
         break;
     case ESP_GATTS_CREATE_EVT:
-        ESP_LOGI(GATTS_TAG, "CREATE_SERVICE_EVT, status %d,  service_handle %d\n", param->create.status, param->create.service_handle);
+    {
+        ESP_LOGI(GATTS_TAG, "CREARE SERVICIU DE ADVERTISING");
         gl_profile_tab[PROFILE_APP_ID].service_handle = param->create.service_handle;
         gl_profile_tab[PROFILE_APP_ID].char_uuid.len = ESP_UUID_LEN_16;
         gl_profile_tab[PROFILE_APP_ID].char_uuid.uuid.uuid16 = GATTS_CHAR_UUID;
@@ -400,7 +371,7 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
                                                         &gatts_char1_val, NULL);
         if (add_char_ret)
         {
-            ESP_LOGE(GATTS_TAG, "add char failed, error code =%x", add_char_ret);
+            ESP_LOGE(GATTS_TAG, "EROARE LA CREAREA SERVICIULUI DE ADVERITISING, Cod eroare={%x}", add_char_ret);
         }
         break;
     }
@@ -411,43 +382,35 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
         uint16_t length = 0;
         const uint8_t *prf_char;
 
-        ESP_LOGI(GATTS_TAG, "ADD_CHAR_EVT, status %d,  attr_handle %d, service_handle %d\n",
-                 param->add_char.status, param->add_char.attr_handle, param->add_char.service_handle);
+        ESP_LOGI(GATTS_TAG, "ADAUGARE DESCRIPTOR CARACTERISTICA\n");
         gl_profile_tab[PROFILE_APP_ID].char_handle = param->add_char.attr_handle;
         gl_profile_tab[PROFILE_APP_ID].descr_uuid.len = ESP_UUID_LEN_16;
         gl_profile_tab[PROFILE_APP_ID].descr_uuid.uuid.uuid16 = ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
+
         esp_err_t get_attr_ret = esp_ble_gatts_get_attr_value(param->add_char.attr_handle, &length, &prf_char);
         if (get_attr_ret == ESP_FAIL)
         {
-            ESP_LOGE(GATTS_TAG, "ILLEGAL HANDLE");
-        }
-
-        ESP_LOGI(GATTS_TAG, "the gatts char length = %x\n", length);
-        for (int i = 0; i < length; i++)
-        {
-            ESP_LOGI(GATTS_TAG, "prf_char[%x] =%x\n", i, prf_char[i]);
+            ESP_LOGE(GATTS_TAG, "HANDLE ILLEGAL");
         }
         esp_err_t add_descr_ret = esp_ble_gatts_add_char_descr(gl_profile_tab[PROFILE_APP_ID].service_handle, &gl_profile_tab[PROFILE_APP_ID].descr_uuid,
                                                                ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE, NULL, NULL);
         if (add_descr_ret)
         {
-            ESP_LOGE(GATTS_TAG, "add char descr failed, error code =%x", add_descr_ret);
+            ESP_LOGE(GATTS_TAG, "ADAUGAREA DESCRIPTORULUI A ESUAT, Cod eroare={%x}", add_descr_ret);
         }
         break;
     }
     case ESP_GATTS_ADD_CHAR_DESCR_EVT:
     {
         gl_profile_tab[PROFILE_APP_ID].descr_handle = param->add_char_descr.attr_handle;
-        ESP_LOGI(GATTS_TAG, "ADD_DESCR_EVT, status %d, attr_handle %d, service_handle %d\n",
-                 param->add_char_descr.status, param->add_char_descr.attr_handle, param->add_char_descr.service_handle);
+        ESP_LOGI(GATTS_TAG, "ADAUGAREA DESCRIPTORULUI A REUSIT, Staus={%d}\n", param->add_char_descr.status);
         break;
     }
     case ESP_GATTS_DELETE_EVT:
         break;
     case ESP_GATTS_START_EVT:
     {
-        ESP_LOGI(GATTS_TAG, "SERVICE_START_EVT, status %d, service_handle %d\n",
-                 param->start.status, param->start.service_handle);
+        ESP_LOGI(GATTS_TAG, "PORNINREA SERVICIULUI, Status={%d}\n", param->start.status);
         break;
     }
     case ESP_GATTS_STOP_EVT:
@@ -462,10 +425,11 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
         conn_params.max_int = 0x20; // max_int = 0x20*1.25ms = 40ms
         conn_params.min_int = 0x10; // min_int = 0x10*1.25ms = 20ms
         conn_params.timeout = 400;  // timeout = 400*10ms = 4000ms
-        ESP_LOGI(GATTS_TAG, "CONNECT EVENT, REMOTE ID = {%02x:%02x:%02x:%02x:%02x:%02x}",
+        ESP_LOGI(GATTS_TAG, "EVENIMET DE CONECTARE, ID={%02x:%02x:%02x:%02x:%02x:%02x}",
                  param->connect.remote_bda[0], param->connect.remote_bda[1], param->connect.remote_bda[2],
                  param->connect.remote_bda[3], param->connect.remote_bda[4], param->connect.remote_bda[5]);
         gl_profile_tab[PROFILE_APP_ID].conn_id = param->connect.conn_id;
+
         //start sent the update connection parameters to the peer device.
         esp_ble_gap_update_conn_params(&conn_params);
         break;
@@ -473,20 +437,12 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
     case ESP_GATTS_DISCONNECT_EVT:
     {
         gv_isPaired = false;
-        ESP_LOGI(GATTS_TAG, "DISCONNECT EVENT REASON: = {0x%x}", param->disconnect.reason);
-        // kf_device_disconnected();
+        ESP_LOGI(GATTS_TAG, "EVENIMENT DE DECONECTARE, MOTIV={0x%x}", param->disconnect.reason);
         esp_ble_gap_start_advertising(&adv_params);
         break;
     }
     case ESP_GATTS_CONF_EVT:
-    {
-        ESP_LOGI(GATTS_TAG, "ESP_GATTS_CONF_EVT, status %d attr_handle %d", param->conf.status, param->conf.handle);
-        if (param->conf.status != ESP_GATT_OK)
-        {
-            esp_log_buffer_hex(GATTS_TAG, param->conf.value, param->conf.len);
-        }
         break;
-    }
     case ESP_GATTS_OPEN_EVT:
         break;
     case ESP_GATTS_CANCEL_OPEN_EVT:
@@ -513,60 +469,66 @@ void kf_config_bt()
         ESP_ERROR_CHECK(nvs_flash_erase());
         ret = nvs_flash_init();
     }
-
     ESP_ERROR_CHECK(ret);
+
     ESP_ERROR_CHECK(esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT));
 
     esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
     ret = esp_bt_controller_init(&bt_cfg);
     if (ret)
     {
-        ESP_LOGE(GATTS_TAG, "%s initialize controller failed: %s\n", __func__, esp_err_to_name(ret));
+        ESP_LOGE(GATTS_TAG, "%s Initializarea controller-ului BT a esuat: %s\n", __func__, esp_err_to_name(ret));
         return;
     }
 
     ret = esp_bt_controller_enable(ESP_BT_MODE_BLE);
     if (ret)
     {
-        ESP_LOGE(GATTS_TAG, "%s enable controller failed: %s\n", __func__, esp_err_to_name(ret));
+        ESP_LOGE(GATTS_TAG, "%s Activarea controller-ului BT a esuat: %s\n", __func__, esp_err_to_name(ret));
         return;
     }
+
     ret = esp_bluedroid_init();
     if (ret)
     {
-        ESP_LOGE(GATTS_TAG, "%s init bluetooth failed: %s\n", __func__, esp_err_to_name(ret));
+        ESP_LOGE(GATTS_TAG, "%s Initializarea BT a esuat: %s\n", __func__, esp_err_to_name(ret));
         return;
     }
+
     ret = esp_bluedroid_enable();
     if (ret)
     {
-        ESP_LOGE(GATTS_TAG, "%s enable bluetooth failed: %s\n", __func__, esp_err_to_name(ret));
+        ESP_LOGE(GATTS_TAG, "%s Activarea BT a esuat: %s\n", __func__, esp_err_to_name(ret));
         return;
     }
 
     ret = esp_ble_gatts_register_callback(gatts_event_handler);
     if (ret)
     {
-        ESP_LOGE(GATTS_TAG, "gatts register error, error code = %x", ret);
+        ESP_LOGE(GATTS_TAG, "INREGISTRAREA PROFILULUI GENERIC DE ATRIBUT A ESUAT, Cod eroare={%x}", ret);
         return;
     }
+
     ret = esp_ble_gap_register_callback(gap_event_handler);
     if (ret)
     {
-        ESP_LOGE(GATTS_TAG, "gap register error, error code = %x", ret);
+        ESP_LOGE(GATTS_TAG, "INREGISTRAREA PROFILULUI GENERIC DE ACCES A ESUAT, Cod eroare={%x}", ret);
         return;
     }
+
     ret = esp_ble_gatts_app_register(PROFILE_APP_ID);
     if (ret)
     {
-        ESP_LOGE(GATTS_TAG, "gatts app register error, error code = %x", ret);
+        ESP_LOGE(GATTS_TAG, "INREGISTRAREA ID-ULUI APLICATIEI A ESUAT = %x", ret);
         return;
     }
-    esp_err_t local_mtu_ret = esp_ble_gatt_set_local_mtu(500);
+
+    esp_err_t local_mtu_ret = esp_ble_gatt_set_local_mtu(23);
     if (local_mtu_ret)
     {
-        ESP_LOGE(GATTS_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
+        ESP_LOGE(GATTS_TAG, "MTU NU A PUTUT FI SETAT, Cod eroare={%x}", local_mtu_ret);
     }
+
     gv_isPaired = false;
     ble_rcv_queue = xQueueCreate(10, MESSAGE_LEN * sizeof(char *));
     xTaskCreate(kf_handle_recv_message, "kf_handle_recv_message", 8192, NULL, 10, NULL);
