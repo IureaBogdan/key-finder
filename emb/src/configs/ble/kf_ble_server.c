@@ -118,7 +118,7 @@ static void kf_handle_recv_message(void *arg)
             }
             else
             {
-                ESP_LOGI(GATTS_TAG, "MESAJUL NU POATE FI GESTIONAT");
+                ESP_LOGI(GATTS_TAG, "CEREREA NU POATE FI INTERPRETATĂ");
             }
         }
     }
@@ -147,7 +147,6 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
         }
         break;
     case ESP_GAP_BLE_ADV_START_COMPLETE_EVT:
-        //advertising start complete event to indicate advertising start successfully or failed
         if (param->adv_start_cmpl.status != ESP_BT_STATUS_SUCCESS)
         {
             ESP_LOGE(GATTS_TAG, "Porinirea serviciului de advertising a esuat\n");
@@ -212,7 +211,7 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
     {
     case ESP_GATTS_REG_EVT:
     {
-        ESP_LOGI(GATTS_TAG, "EVENIMENT DE CONECTARE, Status={%d}, ID={%d}\n", param->reg.status, param->reg.app_id);
+        ESP_LOGI(GATTS_TAG, "EVENIMENT DE ÎNREGISTRARE, Status={%d}, ID={%d}\n", param->reg.status, param->reg.app_id);
         gl_profile_tab[PROFILE_APP_ID].service_id.is_primary = true;
         gl_profile_tab[PROFILE_APP_ID].service_id.id.inst_id = 0x00;
         gl_profile_tab[PROFILE_APP_ID].service_id.id.uuid.len = ESP_UUID_LEN_16;
@@ -350,6 +349,13 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
         break;
     }
     case ESP_GATTS_EXEC_WRITE_EVT:
+        esp_ble_gatts_send_response(gatts_if, param->write.conn_id, param->write.trans_id, ESP_GATT_OK, NULL);
+        if (prepare_write_env.prepare_buf)
+        {
+            free(prepare_write_env.prepare_buf);
+            prepare_write_env.prepare_buf = NULL;
+        }
+        prepare_write_env.prepare_len = 0;
         break;
     case ESP_GATTS_MTU_EVT:
         ESP_LOGI(GATTS_TAG, "ESP_GATTS_MTU_EVT, MTU %d", param->mtu.mtu);
@@ -403,7 +409,7 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
     case ESP_GATTS_ADD_CHAR_DESCR_EVT:
     {
         gl_profile_tab[PROFILE_APP_ID].descr_handle = param->add_char_descr.attr_handle;
-        ESP_LOGI(GATTS_TAG, "ADAUGAREA DESCRIPTORULUI A REUSIT, Staus={%d}\n", param->add_char_descr.status);
+        ESP_LOGI(GATTS_TAG, "ADAUGAREA DESCRIPTORULUI A REUSIT, Status={%d}\n", param->add_char_descr.status);
         break;
     }
     case ESP_GATTS_DELETE_EVT:
