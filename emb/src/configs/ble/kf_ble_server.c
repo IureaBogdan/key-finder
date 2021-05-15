@@ -108,17 +108,17 @@ static void kf_handle_recv_message(void *arg)
         {
             if (strcmp(msg, SECURITY_CODE) == 0)
             {
-                ESP_LOGI(GATTS_TAG, "AUTHORIZE REQUEST");
+                ESP_LOGI(GATTS_TAG, "CERERE DE AUTORIZARE");
                 isAuthorized = true;
             }
             else if (strcmp(msg, FIND_ACCES_CODE) == 0)
             {
-                ESP_LOGI(GATTS_TAG, "FIND REQUEST");
+                ESP_LOGI(GATTS_TAG, "CERERE GĂSIRE DISPOZITIV");
                 kf_find(4000);
             }
             else
             {
-                ESP_LOGI(GATTS_TAG, "MESSAGE NOT HANDLED");
+                ESP_LOGI(GATTS_TAG, "MESAJUL NU POATE FI GESTIONAT");
             }
         }
     }
