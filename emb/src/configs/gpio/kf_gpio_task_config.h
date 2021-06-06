@@ -5,7 +5,7 @@
  * @brief Loads the gpio configurations.
  * @return void
  */
-void kf_load_gpio_configurations();
+void kf_config_gpio();
 
 /**
  * @brief Turns on the buzzer and the leds for timeInMillis milliseconds

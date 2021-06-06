@@ -81,11 +81,7 @@ static void kf_button_action_task(void *arg)
     }
 }
 
-/** 
- * @brief ESP-IDF GPIO configuration function.
- * @return void
- */
-static void kf_config_gpio()
+void kf_config_gpio()
 {
     gpio_config_t io_conf;
 
@@ -101,23 +97,16 @@ static void kf_config_gpio()
     io_conf.pin_bit_mask = INPUT_MASK;
     gpio_config(&io_conf);
 
+    ledc_timer_config(&ledc_timer);
+    ledc_channel_config(&ledc_channel);
+    ledc_fade_func_install(0);
+
     gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
 
     xTaskCreate(kf_button_action_task, "kf_button_action_task", 2048, NULL, 10, NULL);
 
     gpio_install_isr_service(ESP_INTR_FLAG_LOWMED);
     gpio_isr_handler_add(BUTTON_PIN, gpio_isr_handler, (void *)BUTTON_PIN);
-}
-
-/** 
- * @brief ESP-IDF ledc configuration function.
- * @return void
- */
-static void kf_config_ledc()
-{
-    ledc_timer_config(&ledc_timer);
-    ledc_channel_config(&ledc_channel);
-    ledc_fade_func_install(0);
 }
 
 void kf_find(int timeInMillis)
@@ -152,10 +141,4 @@ void kf_find(int timeInMillis)
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
     vTaskDelay(3000 / portTICK_PERIOD_MS);
-}
-
-void kf_load_gpio_configurations()
-{
-    kf_config_gpio();
-    kf_config_ledc();
 }
