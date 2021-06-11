@@ -50,8 +50,7 @@ class DevicesScreen extends React.Component {
 
     onFindPress = async (deviceId, accessCode) => {
         try {
-            if ((await BtManager.findDevice(deviceId, accessCode)).success)
-                ToastAndroid.show('Dispozitivul a fost contactat.', ToastAndroid.SHORT);
+            await BtManager.findDevice(deviceId, accessCode);
         }
         catch (e) {
             if (!ErrorAlert.handleAllErrors(e)) {
