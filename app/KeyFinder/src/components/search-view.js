@@ -1,23 +1,21 @@
 import React from "react";
 import { StyleSheet } from "react-native";
+import { ActivityIndicator } from "react-native";
 import { View } from "react-native";
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Text } from 'react-native-elements';
 import assets from "../../assets/assets";
 
-export default class BlankView extends React.Component {
+export default class SearchView extends React.Component {
     constructor(props) {
         super(props);
     }
     render() {
         return (
             <View style={[styles.container, this.props.style]}>
-                <Ionicons
-                    name={"search-circle-outline"}
-                    size={220}
-                    color={assets.color.additional.inactive}
-                />
-                <View style = {styles.textContainer}>
+                <View>
+                    <ActivityIndicator size="large" color={assets.color.primary.basic} />
+                </View>
+                <View style={styles.textContainer}>
                     <Text h4 h4Style={styles.h4style}>{this.props.title}</Text>
                 </View>
             </View>
@@ -36,7 +34,7 @@ const styles = StyleSheet.create({
         width: '90%'
     },
     h4style: {
-        color: assets.color.additional.inactive,
+        color: assets.color.primary.basic,
         textAlign: "center"
     },
 });

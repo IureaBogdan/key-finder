@@ -2,14 +2,17 @@ import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import StoreDeviceDataModel from '../logic/data-models/store-device-data-model';
+import store from '../logic/storage-manager';
+import BtManager from '../logic/bt-manager';
 import TileList from '../components/found-devices/tile-list';
 import Overlay from '../components/overlay-add-device.js';
 import Header from '../components/top-header';
-import StoreDeviceDataModel from '../utils/data-models/store-device-data-model';
-import store from '../utils/storage-manager';
-import BtManager from '../utils/bt-manager';
-import ErrorHandler from '../components/error-alert';
+import ErrorAlert from './error-alert';
 import BlankView from '../components/blank-view';
+import SearchView from '../components/search-view';
+
+
 
 
 class SearchScreen extends React.Component {
@@ -60,7 +63,7 @@ class SearchScreen extends React.Component {
                 });
             })
                 .catch((e) => {
-                    if (!ErrorHandler.handleAllErrors(e)) {
+                    if (!ErrorAlert.handleAllErrors(e)) {
                         console.log('Eroare la căutarea dispozitivelor');
                         console.error(e);
                     }
@@ -119,7 +122,7 @@ class SearchScreen extends React.Component {
                         deviceName: '',
                         securityCode: '',
                     }, () => {
-                        if (!ErrorHandler.handleAllErrors(e)) {
+                        if (!ErrorAlert.handleAllErrors(e)) {
                             console.log('Eroare la căutarea dispozitivelor');
                             console.error(e);
                         }
@@ -154,11 +157,10 @@ class SearchScreen extends React.Component {
             <View>
                 <Header
                     title='Key Finder'
-                    buttonAction={() => this.onSearchButtonPress()}
+                    buttonAction={this.onSearchButtonPress}
                     isLoading={this.state.isLoading}
                     buttonTitle="Căutare" />
-                {
-                    this.state.devices.length > 0 &&
+                {(this.state.devices.length > 0 && !this.state.isLoading) &&
                     <View>
                         <ScrollView style={{ marginBottom: 95, paddingTop: 6 }}>
                             <View style={styles.foundDevicesContainer}>
@@ -186,9 +188,16 @@ class SearchScreen extends React.Component {
                         />
                     </View>
                 }
+                {(this.state.devices.length > 0 && this.state.isLoading) &&
+                    <View style={styles.searchContainer}>
+                        <SearchView
+                            title="Se caută dispozitivele din proximitate"
+                            style={styles.blank} />
+                    </View>
+                }
                 {
                     this.state.devices.length == 0 &&
-                    < BlankView
+                    <BlankView
                         title="Nu s-au găsit dispozitive KeyFinder în apropiere. Apasă pe butonul de căutare situat mai sus pentru a verifica din nou."
                         style={styles.blank} />
                 }
@@ -209,5 +218,8 @@ const styles = StyleSheet.create({
     },
     blank: {
         marginVertical: 80
+    },
+    searchContainer: {
+        marginVertical: "50%",
     },
 });

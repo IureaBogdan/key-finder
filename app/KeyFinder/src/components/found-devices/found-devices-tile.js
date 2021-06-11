@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-elements';
-import assets from '../../assets';
+import assets from '../../../assets/assets';
 
 export default class Tile extends React.Component {
     constructor(props) {
@@ -51,6 +51,6 @@ const styles = StyleSheet.create({
     id:{
     },
     buttonStyle: {
-        backgroundColor: assets.color.primary,
+        backgroundColor: assets.color.primary.basic,
     },
 });

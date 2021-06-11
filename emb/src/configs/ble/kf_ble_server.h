@@ -19,7 +19,7 @@
 #define GATTS_CHAR_UUID 0xFF01
 #define GATTS_NUM_HANDLE 4 //Number of handlers(Service handle, Characteristic handle, Characteristic value handle, Characteristic descriptor handle)
 
-#define GATTS_TAG "KeyFinder"
+#define GATTS_TAG "Key Finder"
 #define DEVICE_NAME "Key Finder"
 #define GATTS_CHAR_VAL_LEN_MAX 0x40
 

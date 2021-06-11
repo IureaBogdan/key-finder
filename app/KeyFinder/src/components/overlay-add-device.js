@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, Input, Overlay } from 'react-native-elements';
-import assets from '../assets';
+import assets from '../../assets/assets';
 
 export default class AppOverlay extends React.Component {
     constructor(props) {
@@ -40,7 +40,7 @@ export default class AppOverlay extends React.Component {
                     />
                     <View style={styles.formSubmit}>
                         <Text>ID dispozitiv: {this.props.deviceId}</Text>
-                        <Text style={{ color: assets.color.inactive }}> *Pentru a continua, completează câmpurile.</Text>
+                        <Text style={{ color: assets.color.additional.inactive }}> *Pentru a continua, completează câmpurile.</Text>
                         <Button
                             onPress={this.props.onAddPress}
                             title='Adaugă'
@@ -63,13 +63,13 @@ const styles = StyleSheet.create({
         height: '40%',
     },
     inputStyle: {
-        color: assets.color.inactive,
+        color: assets.color.additional.inactive,
     },
     inputContainerStyle: {
-        borderBottomColor: assets.color.primary,
+        borderBottomColor: assets.color.primary.basic,
     },
     buttonStyle: {
-        backgroundColor: assets.color.primary,
+        backgroundColor: assets.color.primary.basic,
         width: 100,
         marginTop: 25,
     },

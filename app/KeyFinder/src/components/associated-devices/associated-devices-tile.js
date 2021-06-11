@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import assets from '../../assets';
+import assets from '../../../assets/assets';
 
 export default class Tile extends React.Component {
     constructor(props) {
@@ -25,7 +25,7 @@ export default class Tile extends React.Component {
                         style={{ height: iconSize, width: iconSize }}
                         name={'key-sharp'}
                         size={iconSize}
-                        color={this.props.active ? assets.color.primary : assets.color.inactive} />
+                        color={this.props.active ? assets.color.primary.basic : assets.color.additional.inactive} />
                 </View>
                 <View style={styles.buttonGroup}>
                     <Button
@@ -33,7 +33,7 @@ export default class Tile extends React.Component {
                             <Ionicons
                                 name={'close-circle-outline'}
                                 size={20}
-                                color={assets.color.secondary}
+                                color={assets.color.secondary.basic}
                             />
                         }
                         containerStyle={styles.deleteButtonContainer}
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         width: '28%',
     },
     findButtonStyle: {
-        backgroundColor: assets.color.primary,
+        backgroundColor: assets.color.primary.basic,
         borderRadius: 15,
 
     },
