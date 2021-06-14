@@ -8,7 +8,7 @@ export default class ErrorAlert {
     static handleBluetoothError = () => {
         Alert.alert(
             "Bluetooth-ul nu este pornit",
-            "Pentru a continua acțiunea, acesta trebuie să fie pornit. Se permite pornirea bluetooth-ului?",
+            "Pentru a scana dispozitivele din jur acesta trebuie pornit. Se permite pornirea bluetooth-ului?",
             [
                 {
                     text: "Nu",
@@ -25,8 +25,8 @@ export default class ErrorAlert {
 
     static handleLocationServicesError = () => {
         Alert.alert(
-            "Locația nu este pornită",
-            "Pentru a continua acțiunea, aceasta trebuie să fie pornită.",
+            "Serviciile de localizare nu sunt pornite",
+            "Pentru a putea scana dispozitivele din jur acestea trebuie pornite.",
             [
                 {
                     text: "Ok",
@@ -40,7 +40,7 @@ export default class ErrorAlert {
         PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             {
-                title: "Accesul la locație nu este permis",
+                title: "Accesul la serviciile de localizare nu este permis",
                 message:
                     "Penru ca aplicația să funcționeze corespunzător, permisiunea " +
                     "de a accesa locația dispozitivului este necesară.",
@@ -54,9 +54,9 @@ export default class ErrorAlert {
             'Dispozitivul nu poate fi contactat',
             "Cauze posibile:\n\n" +
             "Poziția dumneavoastră față de dispozitiv s-a schimbat de la momentul ultimei căutări.\n\n" +
-            "Dispozitivul este conectat cu o altă aplicație mobilă.\n\n" +
+            "Dispozitivul este ocupat.\n\n" +
             "Bluetooth-ul sau locația sunt oprite.\n\n"+
-            "Spam",
+            "Spam al acțiunilor permise",
             [{ text: "Am înțeles", onPress: () => { }, }]);
     }
 
