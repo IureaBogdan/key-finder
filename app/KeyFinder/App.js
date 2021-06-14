@@ -3,8 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import assets from './assets/assets';
+
 import  DevicesScreen from './src/screens/devices-screen';
 import SearchScreen from './src/screens/search-screen';
+import TestScreen from './src/screens/test-screen';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,6 +36,7 @@ export default function App() {
       >
         <Tab.Screen name="Asocieri" component={DevicesScreen} />
         <Tab.Screen name="Caută" component={SearchScreen} />
+        <Tab.Screen name="Teste" component={TestScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
