@@ -6,30 +6,31 @@ import SDDM from '../logic/data-models/store-device-data-model'
 import assets from '../../assets/assets';
 import store from '../logic/storage-manager';
 
-var ids = [
-    '12:23:34:45:56:67',
-    '12:23:34:45:56:68',
-    '12:23:34:45:56:69',
-    '12:23:34:45:56:60'
-]
+
 class TestScreen extends React.Component {
     constructor(props) {
         super(props)
+        this.ids = [
+            '12:23:34:45:56:67',
+            '12:23:34:45:56:68',
+            '12:23:34:45:56:69',
+            '12:23:34:45:56:60'
+        ]
     }
 
     addThreeDevices = async () => {
         var device1 = new SDDM(
-            ids[0],
+            this.ids[0],
             'Chei apartament',
             'EEEEEEEE'
         );
         var device2 = new SDDM(
-            ids[1],
+            this.ids[1],
             'Chei mașină',
             'EEEEEEEE'
         );
         var device3 = new SDDM(
-            ids[2],
+            this.ids[2],
             'Mașa',
             'EEEEEEEE'
         );
@@ -40,7 +41,7 @@ class TestScreen extends React.Component {
 
     addOneDevice = async () => {
         var device = new SDDM(
-            ids[3],
+            this.ids[3],
             'Chei garsonieră',
             'EEEEEEEE'
         );
@@ -48,9 +49,21 @@ class TestScreen extends React.Component {
     }
 
     clearStorage = () => {
-        ids.forEach(id => {
+        this.ids.forEach(id => {
             store.remove(id);
         });
+    }
+
+    add90 = async () => {
+        for (let i = 10; i < 100; i++) {
+            var dev = new SDDM(
+                `${i}:23:34:45:56:60`,
+                `Chei ${i}`,
+                `EEEEEEEE`,
+            );
+            this.ids.push(dev.uuid);
+            await store.store(dev.uuid, dev);
+        }
     }
 
     render() {
@@ -60,6 +73,9 @@ class TestScreen extends React.Component {
                     <Text style={styles.text}>Functii de test</Text>
                 </View>
                 <View style={styles.center}>
+                    <Button title={'Adaugă 90'}
+                        buttonStyle={styles.button}
+                        onPress={this.add90} />
                     <Button title={'Adaugă 3 dispozitive'}
                         buttonStyle={styles.button}
                         onPress={this.addThreeDevices} />
