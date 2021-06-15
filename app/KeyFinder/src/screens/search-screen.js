@@ -215,6 +215,7 @@ const styles = StyleSheet.create({
     foundDevicesContainer: {
         width: '92%',
         marginHorizontal: '4%',
+        marginBottom: 100,
     },
     blank: {
         marginVertical: 80
