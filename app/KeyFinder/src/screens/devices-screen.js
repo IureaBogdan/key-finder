@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
     associatedDevicesContainer: {
         width: '96%',
         marginHorizontal: '2%',
+        marginBottom: 100,
     },
     blank: {
         marginVertical: 80,
