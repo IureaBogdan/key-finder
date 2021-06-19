@@ -1,10 +1,8 @@
-import { Alert } from "react-native";
-import { BluetoothError, DeviceNotInRangeError, KfAppError, LocationError, LocationServicesError } from "../logic/err/kf-app-error";
+import { Alert, PermissionsAndroid } from "react-native";
 import BtManager from '../logic/bt-manager';
-import { PermissionsAndroid } from "react-native";
+import { BluetoothError, DeviceNotInRangeError, KfAppError, LocationError, LocationServicesError } from "../logic/err/kf-app-error";
 
 export default class ErrorAlert {
-
     static handleBluetoothError = () => {
         Alert.alert(
             "Bluetooth-ul nu este pornit",
@@ -55,7 +53,7 @@ export default class ErrorAlert {
             "Cauze posibile:\n\n" +
             "Poziția dumneavoastră față de dispozitiv s-a schimbat de la momentul ultimei căutări.\n\n" +
             "Dispozitivul este ocupat.\n\n" +
-            "Bluetooth-ul sau locația sunt oprite.\n\n"+
+            "Bluetooth-ul sau locația sunt oprite.\n\n" +
             "Spam al acțiunilor permise",
             [{ text: "Am înțeles", onPress: () => { }, }]);
     }

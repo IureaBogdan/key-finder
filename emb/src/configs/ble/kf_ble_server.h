@@ -34,7 +34,7 @@
 #define PROFILE_NUM 1
 #define PROFILE_APP_ID 0
 
-#define MESSAGE_LEN 6
+#define MESSAGE_LEN 12
 
 enum
 {

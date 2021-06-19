@@ -3,7 +3,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import assets from '../../../assets/assets';
-
 export default class Tile extends React.Component {
     constructor(props) {
         super(props);
@@ -42,10 +41,10 @@ export default class Tile extends React.Component {
                     <Button
                         title='Găsește'
                         disabled={!this.props.active}
+                        loading={this.props.loading}
                         containerStyle={styles.findButtonContainer}
                         buttonStyle={styles.findButtonStyle}
                         onPress={this.props.onFindPress} />
-
                 </View>
             </View>
         )
@@ -75,7 +74,6 @@ const styles = StyleSheet.create({
     },
     iconContainer: {
         display: 'flex',
-        // justifyContent: 'center',
         alignItems: 'center'
     },
     buttonGroup: {

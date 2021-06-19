@@ -10,6 +10,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "../gpio/kf_gpio_task_config.h"
+#include "../kf_defs.h"
+
 bool gv_isPaired = false;
 xQueueHandle ble_rcv_queue = NULL;
 
@@ -26,7 +30,7 @@ static esp_attr_value_t gatts_char1_val = {
 
 static bool isAuthorized = false;
 
-/* CONFIG_SET_RAW_ADV_DATA */
+/* ADV ID */
 static uint8_t adv_service_uuid128[ESP_UUID_LEN_128] = {
     /* LSB <--------------------------------------------------------------------------------> MSB */
     0xfb,
@@ -47,7 +51,6 @@ static uint8_t adv_service_uuid128[ESP_UUID_LEN_128] = {
     0x00,
 };
 
-//adv data
 static esp_ble_adv_data_t adv_data = {
     .set_scan_rsp = false,
     .include_name = true,
@@ -64,7 +67,6 @@ static esp_ble_adv_data_t adv_data = {
     .flag = (ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT),
 };
 
-// Scan response data
 static esp_ble_adv_data_t scan_rsp_data = {
     .set_scan_rsp = true,
     .include_name = true,
@@ -88,30 +90,37 @@ static esp_ble_adv_params_t adv_params = {
     .adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
 };
 
-/* One gatt-based profile one app_id and one gatts_if, this array will store the gatts_if returned by ESP_GATTS_REG_EVT */
 static struct gatts_profile_inst gl_profile_tab[PROFILE_NUM] = {
     [PROFILE_APP_ID] = {
         .gatts_cb = kf_gatts_profile_event_handler,
-        .gatts_if = ESP_GATT_IF_NONE, /* Not get the gatt_if, so initial is ESP_GATT_IF_NONE */
+        .gatts_if = ESP_GATT_IF_NONE,
     }};
 
 /**
- * @brief Handler function for received message.
- * @return Does not return.
+ * @brief Received messages handler.
+ * @return Does not return - infinite loop.
 */
 static void kf_handle_recv_message(void *arg)
 {
-    const char *msg;
+    uint8_t *msg;
     for (;;)
     {
         if (xQueueReceive(ble_rcv_queue, &msg, portMAX_DELAY))
         {
-            if (strcmp(msg, SECURITY_CODE) == 0)
+            printf("Handler: ");
+            printf((char*)msg);
+            printf("\n");
+            if (strcmp((char*)msg, SECURITY_CODE) == 0)
             {
                 ESP_LOGI(GATTS_TAG, "CERERE DE AUTORIZARE");
                 isAuthorized = true;
+                kf_set_pin_on_high(LGREEN_PIN, 270);
+                vTaskDelay(95 / portTICK_PERIOD_MS);
+                kf_set_pin_on_high(LGREEN_PIN, 270);
+                vTaskDelay(95 / portTICK_PERIOD_MS);
+                kf_set_pin_on_high(LGREEN_PIN, 270);
             }
-            else if (strcmp(msg, FIND_ACCES_CODE) == 0)
+            else if (strcmp((char*)msg, FIND_ACCES_CODE) == 0)
             {
                 ESP_LOGI(GATTS_TAG, "CERERE GĂSIRE DISPOZITIV");
                 kf_find(4000);
@@ -125,9 +134,9 @@ static void kf_handle_recv_message(void *arg)
 }
 
 /**
- * @brief GAP event handler - used as callback.
+ * @brief GAP event handler
  * @return void
-*/
+ */
 static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param)
 {
     switch (event)
@@ -170,9 +179,9 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
 }
 
 /**
- * @brief Register gatts event handler - used as callback.
+ * @brief GATTS event handler
  * @return void
-*/
+ */
 static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
 {
     /* If event is register event, store the gatts_if for each profile */
@@ -188,23 +197,24 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
             return;
         }
     }
-    do
+    int idx;
+    for (idx = 0; idx < PROFILE_NUM; idx++)
     {
-        int idx;
-        for (idx = 0; idx < PROFILE_NUM; idx++)
+        if (gatts_if == ESP_GATT_IF_NONE ||
+            gatts_if == gl_profile_tab[idx].gatts_if)
         {
-            if (gatts_if == ESP_GATT_IF_NONE ||
-                gatts_if == gl_profile_tab[idx].gatts_if)
+            if (gl_profile_tab[idx].gatts_cb)
             {
-                if (gl_profile_tab[idx].gatts_cb)
-                {
-                    gl_profile_tab[idx].gatts_cb(event, gatts_if, param);
-                }
+                gl_profile_tab[idx].gatts_cb(event, gatts_if, param);
             }
         }
-    } while (0);
+    }
 }
 
+/**
+ * @brief GATTS profile handler
+ * @return void
+ */
 void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param)
 {
     switch (event)
@@ -464,11 +474,14 @@ void kf_gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t ga
     }
 }
 
+/**
+ * @brief Bluetooth Low Energy configuration function
+ * @return void
+ */
 void kf_config_bt()
 {
     esp_err_t ret;
 
-    // Initialize NVS.
     ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
     {

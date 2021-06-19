@@ -12,11 +12,9 @@ export default class AppOverlay extends React.Component {
         return (
             <Overlay
                 backdropStyle={{ backgroundColor: 'rgba(125,125,125,0.6)' }}
-
                 animationType='fade'
                 transparent={true}
                 statusBarTranslucent={true}
-
                 isVisible={this.props.isVisible}
                 onBackdropPress={this.props.onBackdropPress}>
                 <View style={styles.container}>

@@ -13,7 +13,7 @@ export default class TileList extends React.Component {
                 <Tile
                     title={dev.title}
                     deviceId={dev.deviceId}
-                    onPress = {dev.onPress}
+                    onPress={dev.onPress}
                     key={dev.key} />
             );
         });
