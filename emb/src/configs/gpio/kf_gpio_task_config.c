@@ -56,7 +56,6 @@ static void IRAM_ATTR gpio_isr_handler(void *arg)
 
 /**
  * @brief Handler function for interruption event queue.
- * Used as callback.
  * @return Does not return.
 */
 static void kf_button_action_task(void *arg)
@@ -74,7 +73,7 @@ static void kf_button_action_task(void *arg)
                 }
                 else
                 {
-                    kf_set_pin_on_high(LRED_PIN, 1000);
+                    kf_set_pin_on_high(LGREEN_PIN, 1000);
                 }
             }
         }
@@ -140,5 +139,4 @@ void kf_find(int timeInMillis)
         timer += duration;
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
-    vTaskDelay(3000 / portTICK_PERIOD_MS);
 }

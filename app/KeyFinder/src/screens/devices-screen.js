@@ -1,15 +1,15 @@
 import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
-import { Alert, StyleSheet, Text, ToastAndroid, View } from 'react-native';
+import { Alert, StyleSheet, ToastAndroid, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import assets from '../../assets/assets';
-import BtManager from "../logic/bt-manager";
-import store from '../logic/storage-manager';
 import TileList from '../components/associated-devices/tile-list';
 import BlankView from '../components/blank-view';
-import Header from '../components/top-header';
-import ErrorAlert from './error-alert';
 import SearchView from '../components/search-view';
+import Header from '../components/top-header';
+import BtManager from "../logic/bt-manager";
+import store from '../logic/storage-manager';
+import ErrorAlert from './error-alert';
 
 class DevicesScreen extends React.Component {
     constructor(props) {
@@ -21,43 +21,62 @@ class DevicesScreen extends React.Component {
     }
 
     componentDidMount() {
-        store.getAllDevices().then((devices) => {
-            if (devices.length > 0)
-                this.refreshDevices()
-        });
+        store.getAllDevices()
+            .then((devices) => {
+                if (devices.length > 0)
+                    this.refreshDevices()
+            });
     }
 
     onDeletePress = (deviceId, deviceName) => {
         Alert.alert(
             "Atenție!!!",
             `Ești pe cale de a șterge asocierea cu dispozitivul '${deviceName}'. Ești sigur că vrei să continui această acțiune?`,
-            [{
-                text: "Anulează",
-                onPress: () => { },
-                style: "cancel"
-            },
-            {
-                text: "Da",
-                onPress: async () => {
-                    await store.remove(deviceId);
-                    const filteredDevices = this.state.devices.filter((d) => {
-                        return d.uuid != deviceId;
-                    });
-                    this.setState({ devices: [...filteredDevices] }, () => { ToastAndroid.show(`${deviceName} a fost șters.`, ToastAndroid.SHORT); });
+            [
+                {
+                    text: "Anulează",
+                    onPress: () => { },
+                    style: "cancel"
+                },
+                {
+                    text: "Da",
+                    onPress: async () => {
+                        await store.remove(deviceId);
+                        const filteredDevices = this.state.devices.filter((d) => {
+                            return d.uuid != deviceId;
+                        });
+                        this.setState({ devices: [...filteredDevices] }, () => { ToastAndroid.show(`${deviceName} a fost șters.`, ToastAndroid.SHORT); });
+                    }
                 }
-            }]);
+            ]);
     }
 
-    onFindPress = async (deviceId, accessCode) => {
-        try {
-            await BtManager.findDevice(deviceId, accessCode);
-        }
-        catch (e) {
-            if (!ErrorAlert.handleAllErrors(e)) {
-                console.log('Eroare la localizarea dispozitivlului.');
-                console.error(e);
+    onFindPress = (deviceId, accessCode) => {
+        this.state.devices.forEach(d => {
+            if (d.uuid == deviceId) {
+                d.loading = true;
             }
-        }
+        })
+        this.setState({ devices: [...this.state.devices] }, async () => {
+            try {
+                await BtManager.findDevice(deviceId, accessCode);
+                this.state.devices.forEach(d => {
+                    if (d.uuid == deviceId) {
+                        d.loading = false;
+                    }
+                })
+                setTimeout(() => {
+                    this.setState({ devices: [...this.state.devices] });
+                }, 4000)
+            }
+            catch (e) {
+                if (!ErrorAlert.handleAllErrors(e)) {
+                    console.log('Eroare la localizarea dispozitivlului.');
+                    console.error(e);
+                }
+            }
+        });
+
     }
 
     refreshDevices = () => {
@@ -74,6 +93,7 @@ class DevicesScreen extends React.Component {
                 d['onDeletePress'] = this.onDeletePress.bind(this, d.uuid, d.deviceName);
                 d['color'] = assets.color.additional.inactive;
                 d['active'] = false;
+                d['loading'] = false;
             });
             this.setState({ isLoading: true }, async () => {
                 let hasFound = false;
@@ -120,28 +140,28 @@ class DevicesScreen extends React.Component {
                         isLoading={this.state.isLoading}
                         buttonTitle="Reîmprospătare"
                     ></Header>
-                    {(this.state.devices.length > 0 && !this.state.isLoading) &&
+                    {
+                        (this.state.devices.length > 0 && !this.state.isLoading) &&
                         <ScrollView style={{ marginBottom: 95, paddingTop: 6 }}>
                             <View style={styles.associatedDevicesContainer}>
                                 {this.state.devices.length != 0 && <TileList devices={this.state.devices} />}
                             </View>
                         </ScrollView>
                     }
-                    {(this.state.devices.length > 0 && this.state.isLoading) &&
+                    {
+                        (this.state.devices.length > 0 && this.state.isLoading) &&
                         <View style={styles.searchContainer}>
                             <SearchView
                                 title="Se caută dispozitivele asociate"
                                 style={styles.blank} />
                         </View>
                     }
-                    {this.state.devices.length == 0 &&
+                    {
+                        this.state.devices.length == 0 &&
                         < BlankView
                             title="Nu există asocieri cu dispozitivele KeyFinder. Apasă pe tab-ul caută pentru a adăuga unul."
                             style={styles.blank} />
                     }
-                </View>
-
-                <View>
                 </View>
             </View>
         );

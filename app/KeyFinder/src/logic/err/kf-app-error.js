@@ -34,4 +34,5 @@ export {
   LocationError,
   LocationServicesError,
   DeviceNotInRangeError,
-}
+};
+

@@ -2,28 +2,23 @@ import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import StoreDeviceDataModel from '../logic/data-models/store-device-data-model';
-import store from '../logic/storage-manager';
-import BtManager from '../logic/bt-manager';
+import BlankView from '../components/blank-view';
 import TileList from '../components/found-devices/tile-list';
 import Overlay from '../components/overlay-add-device.js';
-import Header from '../components/top-header';
-import ErrorAlert from './error-alert';
-import BlankView from '../components/blank-view';
 import SearchView from '../components/search-view';
-
-
-
+import Header from '../components/top-header';
+import BtManager from '../logic/bt-manager';
+import StoreDeviceDataModel from '../logic/data-models/store-device-data-model';
+import store from '../logic/storage-manager';
+import ErrorAlert from './error-alert';
 
 class SearchScreen extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             overlayVisible: false,
             isLoading: false,
             isCheckingSecurityCode: false,
-
             devices: [],
             deviceId: null,
             deviceName: '',
@@ -54,14 +49,15 @@ class SearchScreen extends React.Component {
 
     onSearchButtonPress = () => {
         this.setState({ isLoading: true }, () => {
-            BtManager.searchForDevices().then((d) => {
-                this.setState({ devices: [...d] }, () => {
-                    if (this.state.devices.length > 0)
-                        ToastAndroid.show("Au fost găsite dispozitive în apropiere.", ToastAndroid.SHORT);
-                    else
-                        ToastAndroid.show("Nu a fost găsit niciun dispozitiv.", ToastAndroid.SHORT);
-                });
-            })
+            BtManager.searchForDevices()
+                .then((d) => {
+                    this.setState({ devices: [...d] }, () => {
+                        if (this.state.devices.length > 0)
+                            ToastAndroid.show("Au fost găsite dispozitive în apropiere.", ToastAndroid.SHORT);
+                        else
+                            ToastAndroid.show("Nu a fost găsit niciun dispozitiv.", ToastAndroid.SHORT);
+                    });
+                })
                 .catch((e) => {
                     if (!ErrorAlert.handleAllErrors(e)) {
                         console.log('Eroare la căutarea dispozitivelor');
@@ -160,7 +156,8 @@ class SearchScreen extends React.Component {
                     buttonAction={this.onSearchButtonPress}
                     isLoading={this.state.isLoading}
                     buttonTitle="Căutare" />
-                {(this.state.devices.length > 0 && !this.state.isLoading) &&
+                {
+                    (this.state.devices.length > 0 && !this.state.isLoading) &&
                     <View>
                         <ScrollView style={{ marginBottom: 95, paddingTop: 6 }}>
                             <View style={styles.foundDevicesContainer}>
@@ -188,7 +185,8 @@ class SearchScreen extends React.Component {
                         />
                     </View>
                 }
-                {(this.state.devices.length > 0 && this.state.isLoading) &&
+                {
+                    (this.state.devices.length > 0 && this.state.isLoading) &&
                     <View style={styles.searchContainer}>
                         <SearchView
                             title="Se caută dispozitivele din proximitate"

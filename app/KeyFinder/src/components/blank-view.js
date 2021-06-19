@@ -1,8 +1,7 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import { View } from "react-native";
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { StyleSheet, View } from "react-native";
 import { Text } from 'react-native-elements';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import assets from "../../assets/assets";
 
 export default class BlankView extends React.Component {
@@ -17,7 +16,7 @@ export default class BlankView extends React.Component {
                     size={220}
                     color={assets.color.additional.inactive}
                 />
-                <View style = {styles.textContainer}>
+                <View style={styles.textContainer}>
                     <Text h4 h4Style={styles.h4style}>{this.props.title}</Text>
                 </View>
             </View>

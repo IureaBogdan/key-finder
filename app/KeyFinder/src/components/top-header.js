@@ -26,7 +26,6 @@ export default class TopBar extends React.Component {
             loadingProps={{ color: assets.color.secondary.basic }}
             onPress={() => this.props.buttonAction()}
             type="clear" />
-
         return (
             <View>
                 <Header
@@ -62,7 +61,7 @@ const styles = StyleSheet.create({
         padding: 5,
         fontSize: 14
     },
-    buttonContainerStyle:{
+    buttonContainerStyle: {
         width: 120,
     },
 });

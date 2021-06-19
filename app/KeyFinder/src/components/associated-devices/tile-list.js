@@ -18,6 +18,7 @@ export default class TileList extends React.Component {
                     onDeletePress={dev.onDeletePress}
                     color={dev.color}
                     active={dev.active}
+                    loading={dev.loading}
                     deviceId={dev.uuid}
                 />
             );
