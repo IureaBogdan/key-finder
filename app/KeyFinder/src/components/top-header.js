@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         backgroundColor: assets.color.primary.basic,
     },
     title: {
-        width: 118,
+        width: 150,
         fontSize: 28,
         color: assets.color.secondary.basic
     },
@@ -62,6 +62,6 @@ const styles = StyleSheet.create({
         fontSize: 14
     },
     buttonContainerStyle: {
-        width: 120,
+        width: 150,
     },
 });

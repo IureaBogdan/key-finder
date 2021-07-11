@@ -70,6 +70,12 @@ class DevicesScreen extends React.Component {
                 }, 4000)
             }
             catch (e) {
+                this.state.devices.forEach(d => {
+                    if (d.uuid == deviceId) {
+                        d.loading = false;
+                    }
+                })
+                this.setState({ devices: [...this.state.devices] });
                 if (!ErrorAlert.handleAllErrors(e)) {
                     console.log('Eroare la localizarea dispozitivlului.');
                     console.error(e);

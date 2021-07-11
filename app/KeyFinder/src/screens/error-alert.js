@@ -50,11 +50,8 @@ export default class ErrorAlert {
     static handleDeviceNotInRangeError = () => {
         Alert.alert(
             'Dispozitivul nu poate fi contactat',
-            "Cauze posibile:\n\n" +
-            "Poziția dumneavoastră față de dispozitiv s-a schimbat de la momentul ultimei căutări.\n\n" +
-            "Dispozitivul este ocupat.\n\n" +
-            "Bluetooth-ul sau locația sunt oprite.\n\n" +
-            "Spam al acțiunilor permise",
+            "Este posibil ca Bluetooth-ul sau serviciile de localizare să nu fie activate" +
+            " sau ca dispozitivul să nu mai fie în apropiere/să fie ocupat.",
             [{ text: "Am înțeles", onPress: () => { }, }]);
     }
 
